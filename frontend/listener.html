@@ -1,0 +1,287 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Listener Dashboard | KOLO MUSIC</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <!-- ==========================================
+       LISTENER NAVIGATION
+  ========================================== -->
+
+    <header class="navbar">
+      ```
+      <div class="logo">🎵 KOLO MUSIC</div>
+
+      <nav class="nav-links">
+        <!-- Stay inside listener dashboard -->
+        <a href="#top"> Home </a>
+
+        <!-- Stay inside listener dashboard -->
+        <a href="#discover"> Discover </a>
+
+        <a href="#library"> My Music </a>
+      </nav>
+
+      <div class="nav-buttons">
+        <button type="button" id="logoutButton" class="login-btn">
+          Logout
+        </button>
+      </div>
+      ```
+    </header>
+
+    <!-- ==========================================
+       MAIN LISTENER DASHBOARD
+  ========================================== -->
+
+    <main id="top" class="listener-dashboard">
+      ```
+      <!-- ========================================
+     WELCOME
+======================================== -->
+
+      <section class="dashboard-header">
+        <div>
+          <p class="dashboard-label">LISTENER DASHBOARD</p>
+
+          <h1 id="welcomeMessage">Welcome to KOLO MUSIC</h1>
+
+          <p>Your music, your library, your screams.</p>
+        </div>
+      </section>
+
+      <!-- ========================================
+     DASHBOARD STATS
+======================================== -->
+
+      <section class="dashboard-stats">
+        <!-- PURCHASED SONGS -->
+
+        <div class="stat-card">
+          <div class="stat-icon">🎵</div>
+
+          <div>
+            <strong id="purchasedCount"> 0 </strong>
+
+            <p>Purchased Songs</p>
+          </div>
+        </div>
+
+        <!-- AVAILABLE SCREAMS -->
+
+        <div class="stat-card">
+          <div class="stat-icon">🔥</div>
+
+          <div>
+            <strong id="availableCount"> 0 </strong>
+
+            <p>Available Screams</p>
+          </div>
+        </div>
+
+        <!-- ACCOUNT TYPE -->
+
+        <div class="stat-card">
+          <div class="stat-icon">👤</div>
+
+          <div>
+            <strong id="userRole"> Listener </strong>
+
+            <p>Account Type</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================
+     KOLO MUSIC PLAYER
+======================================== -->
+
+      <section class="listener-player" id="listenerPlayer">
+        <div class="player-song-info">
+          <img id="playerCover" src="" alt="Song cover" />
+
+          <div>
+            <span> NOW PLAYING </span>
+
+            <strong id="playerTitle"> No song selected </strong>
+
+            <p id="playerArtist">Choose a song from your library.</p>
+          </div>
+        </div>
+
+        <!-- ======================================
+       AUDIO PLAYER
+  ====================================== -->
+
+        <audio
+          id="audioPlayer"
+          controls
+          preload="metadata"
+          controlsList="nodownload noplaybackrate"
+          disablePictureInPicture
+        ></audio>
+
+        <p id="playerMessage" class="player-message">
+          Each KOLO SCREAM can be played once.
+        </p>
+      </section>
+
+      <!-- ========================================
+     STREAM NOTICE
+======================================== -->
+
+      <section class="stream-notice">
+        <div>
+          <strong> 🔥 KOLO SCREAM </strong>
+
+          <p>
+            Each scream gives you one authorized opportunity to listen to a
+            song.
+          </p>
+        </div>
+
+        <span> 50 LD </span>
+      </section>
+
+      <!-- ========================================
+     MY MUSIC / LIBRARY
+======================================== -->
+
+      <section id="library" class="music-section">
+        <div class="section-heading">
+          <div>
+            <p class="dashboard-label">YOUR COLLECTION</p>
+
+            <h2>My Music</h2>
+          </div>
+
+          <!-- This stays inside listener.html -->
+          <button
+            type="button"
+            class="secondary-btn"
+            onclick="goToDiscoverMusic()"
+          >
+            Discover Music
+          </button>
+        </div>
+
+        <p id="libraryMessage" class="library-message">Loading your music...</p>
+
+        <!--
+    listener.js loads PURCHASED songs here.
+  -->
+
+        <div id="libraryContainer" class="music-grid">
+          <div class="music-card">
+            <div class="music-info">
+              <p>Loading your music...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================
+     DISCOVER MUSIC
+======================================== -->
+
+      <section id="discover" class="listener-section">
+        <div class="listener-section-header">
+          <div>
+            <p class="dashboard-label">KOLO MUSIC</p>
+
+            <h2>Discover Music</h2>
+
+            <p id="discoverMusicMessage">
+              Discover approved music from KOLO MUSIC artists.
+            </p>
+          </div>
+        </div>
+
+        <!--
+    listener.js loads ALL approved songs here.
+  -->
+
+        <div id="discoverMusicContainer" class="music-grid">
+          <div class="music-card">
+            <div class="music-info">
+              <p>Loading KOLO MUSIC...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      ```
+    </main>
+
+    <!-- ==========================================
+       SCREAM PAYMENT MODAL
+  ========================================== -->
+
+    <div id="screamModal" class="scream-modal" style="display: none">
+      ```
+      <div class="scream-modal-content">
+        <!-- CLOSE -->
+
+        <button type="button" id="closeScreamModal" class="close-modal">
+          ×
+        </button>
+
+        <p class="dashboard-label">KOLO SCREAM</p>
+
+        <h2 id="paymentSongTitle">Scream & Listen</h2>
+
+        <p id="paymentArtistName">Artist</p>
+
+        <div class="scream-price">50 LD</div>
+
+        <!-- ======================================
+       PAYMENT METHOD
+  ====================================== -->
+
+        <label for="paymentMethod"> Payment Method </label>
+
+        <select id="paymentMethod">
+          <option value="">Select payment method</option>
+
+          <option value="lonestar">Lonestar Cell MTN---0881359337</option>
+
+          <option value="orange">Orange Money---0770999462</option>
+        </select>
+
+        <!-- ======================================
+       PAYMENT PROOF
+  ====================================== -->
+
+        <label for="paymentProof"> Upload Payment Proof </label>
+
+        <input type="file" id="paymentProof" accept="image/*" />
+
+        <!-- ======================================
+       SUBMIT PAYMENT
+  ====================================== -->
+
+        <button type="button" id="submitScreamPayment" class="primary-btn">
+          Submit Scream Payment
+        </button>
+
+        <p id="paymentMessage" class="payment-message"></p>
+      </div>
+      ```
+    </div>
+
+    <!-- ==========================================
+       JAVASCRIPT
+  ========================================== -->
+
+    <script src="js/api.js"></script>
+
+    <script src="js/listener.js"></script>
+  </body>
+</html>

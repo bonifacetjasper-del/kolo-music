@@ -1,0 +1,302 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Upload Song | KOLO MUSIC</title>
+
+    <!-- ================================
+       KOLO MUSIC GLOBAL CSS
+  ================================= -->
+
+    <link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/artist_uploads.css">
+  </head>
+
+  <body class="artist-upload-page">
+    <!-- =================================
+       PAGE HEADER
+  ================================== -->
+
+    <header class="artist-upload-header">
+      ```
+      <div class="artist-upload-header-left">
+        <a
+          href="./artist.html"
+          class="back-button"
+          aria-label="Back to artist dashboard"
+        >
+          ←
+        </a>
+
+        <div>
+          <p class="page-label">KOLO MUSIC</p>
+
+          <h1>Upload Song</h1>
+        </div>
+      </div>
+
+      <div class="artist-upload-header-right">
+        <div id="artistUploadStatus" class="artist-status status-unknown">
+          LOADING
+        </div>
+      </div>
+      ```
+    </header>
+
+    <!-- =================================
+       MAIN CONTENT
+  ================================== -->
+
+    <main class="artist-upload-main">
+      ```
+      <!-- =================================
+     PAGE INTRODUCTION
+================================== -->
+
+      <section class="upload-intro">
+        <p class="section-label">MUSIC</p>
+
+        <h2>Upload Your New Song</h2>
+
+        <p>
+          Upload your song, cover image and song information. Your song will be
+          sent to the KOLO MUSIC admin team for review before it becomes
+          available to listeners.
+        </p>
+      </section>
+
+      <!-- =================================
+     GLOBAL MESSAGE
+================================== -->
+
+      <div
+        id="uploadPageMessage"
+        class="dashboard-message hidden"
+        role="alert"
+        aria-live="polite"
+      ></div>
+
+      <!-- =================================
+     UPLOAD CARD
+================================== -->
+
+      <section class="upload-card">
+        <!-- =================================
+       ARTIST INFORMATION
+  ================================== -->
+
+        <div class="upload-artist-info">
+          <div class="profile-avatar">
+            <span id="uploadArtistAvatar"> A </span>
+          </div>
+
+          <div>
+            <p class="section-label">ARTIST</p>
+
+            <h3 id="uploadArtistName">Artist</h3>
+
+            <p id="uploadArtistStatusText">Checking artist account...</p>
+          </div>
+        </div>
+
+        <!-- =================================
+       UPLOAD FORM
+  ================================== -->
+
+        <form id="uploadSongForm" enctype="multipart/form-data">
+          <!-- =================================
+         SONG TITLE
+    ================================== -->
+
+          <div class="form-group">
+            <label for="songTitle"> Song Title </label>
+
+            <input
+              type="text"
+              id="songTitle"
+              name="title"
+              placeholder="Enter song title"
+              maxlength="150"
+              autocomplete="off"
+              required
+            />
+
+            <small> Enter the official title of your song. </small>
+          </div>
+
+          <!-- =================================
+         DESCRIPTION
+    ================================== -->
+
+          <div class="form-group">
+            <label for="songDescription"> Description </label>
+
+            <textarea
+              id="songDescription"
+              name="description"
+              rows="5"
+              maxlength="1000"
+              placeholder="Tell listeners about this song..."
+            ></textarea>
+
+            <small> Optional. Maximum 1000 characters. </small>
+          </div>
+
+          <!-- =================================
+         COVER IMAGE
+    ================================== -->
+
+          <div class="form-group">
+            <label for="songCover"> Cover Image </label>
+
+            <input
+              type="file"
+              id="songCover"
+              name="cover"
+              accept="image/jpeg,image/png,image/webp"
+              required
+            />
+
+            <small> JPG, PNG or WEBP recommended. </small>
+          </div>
+
+          <!-- =================================
+         COVER PREVIEW
+    ================================== -->
+
+          <div
+            id="coverPreviewContainer"
+            class="cover-preview-container hidden"
+          >
+            <p class="preview-label">COVER PREVIEW</p>
+
+            <img id="coverPreview" src="" alt="Song cover preview" />
+          </div>
+
+          <!-- =================================
+         AUDIO FILE
+    ================================== -->
+
+          <div class="form-group">
+            <label for="songAudio"> Audio File </label>
+
+            <input
+              type="file"
+              id="songAudio"
+              name="audio"
+              accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg"
+              required
+            />
+
+            <small> Upload the final version of your song. </small>
+          </div>
+
+          <!-- =================================
+         AUDIO INFORMATION
+    ================================== -->
+
+          <div id="audioFileInfo" class="file-information hidden">
+            <span> Selected audio: </span>
+
+            <strong id="audioFileName"> — </strong>
+          </div>
+
+          <!-- =================================
+         UPLOAD MESSAGE
+    ================================== -->
+
+          <p
+            id="uploadSongMessage"
+            class="form-message"
+            role="alert"
+            aria-live="polite"
+          ></p>
+
+          <!-- =================================
+         SUBMIT BUTTON
+    ================================== -->
+
+          <button
+            type="submit"
+            id="submitUploadSongButton"
+            class="primary-button full-width"
+          >
+            Upload Song
+          </button>
+
+          <!-- =================================
+         CANCEL BUTTON
+    ================================== -->
+
+          <a href="./artist.html" class="secondary-button full-width">
+            Cancel
+          </a>
+        </form>
+      </section>
+
+      <!-- =================================
+     UPLOAD INFORMATION
+================================== -->
+
+      <section class="upload-information-card">
+        <div class="information-icon">!</div>
+
+        <div>
+          <h3>Before you upload</h3>
+
+          <ul>
+            <li>Make sure the song is your final version.</li>
+
+            <li>Use a clear and appropriate cover image.</li>
+
+            <li>
+              Your song will initially have
+              <strong>Pending</strong> status.
+            </li>
+
+            <li>
+              An administrator must approve the song before listeners can access
+              it.
+            </li>
+          </ul>
+        </div>
+      </section>
+      ```
+    </main>
+
+    <!-- =================================
+       PAGE FOOTER
+  ================================== -->
+
+    <footer class="artist-upload-footer">
+      ```
+      <p>© 2026 KOLO MUSIC</p>
+
+      <p>Upload music. Get discovered.</p>
+      ```
+    </footer>
+
+    <!-- =================================
+       JAVASCRIPT
+       
+       IMPORTANT:
+       All JS files are inside /js/
+  ================================== -->
+
+    <!-- API CONNECTION -->
+
+    <script src="./js/api.js"></script>
+
+    <!-- AUTHENTICATION -->
+
+    <script src="./js/auth.js"></script>
+
+    <!-- SONG UPLOAD LOGIC -->
+
+    <script src="./js/artist_uploads.js"></script>
+  </body>
+</html>

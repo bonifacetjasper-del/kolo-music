@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="description" content="KOLO MUSIC Artist Dashboard" />
+
+    <meta name="theme-color" content="#0b0b0b" />
+
+    <title>KOLO MUSIC — Artist Dashboard</title>
+
+    <!-- =====================================================
+       KOLO MUSIC ARTIST DASHBOARD CSS
+  ====================================================== -->
+    <link rel="stylesheet" href="css/artist.css" />
+
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>"
+    />
+  </head>
+
+  <body>
+    <!-- =====================================================
+       DASHBOARD WRAPPER
+  ====================================================== -->
+
+    <div class="artist-dashboard">
+      <!-- ===================================================
+         MOBILE SIDEBAR OVERLAY
+    ==================================================== -->
+
+      <div id="sidebarOverlay" class="sidebar-overlay" aria-hidden="true"></div>
+
+      <!-- ===================================================
+         SIDEBAR
+    ==================================================== -->
+
+      <aside
+        id="artistSidebar"
+        class="artist-sidebar"
+        aria-label="Artist dashboard sidebar"
+      >
+        <!-- SIDEBAR TOP -->
+
+        <div class="artist-sidebar-top">
+          <!-- LOGO -->
+
+          <div class="artist-logo">
+            <h1>KOLO</h1>
+            <span>MUSIC</span>
+          </div>
+
+          <!-- OPTIONAL ARTIST MINI PROFILE -->
+
+          <div class="artist-sidebar-profile">
+            <div class="artist-avatar">
+              <span id="sidebarArtistAvatar">A</span>
+            </div>
+
+            <strong id="sidebarArtistName"> Artist </strong>
+
+            <small> Artist Account </small>
+          </div>
+
+          <!-- NAVIGATION -->
+
+          <nav
+            class="artist-navigation"
+            aria-label="Artist dashboard navigation"
+          >
+            <button
+              type="button"
+              class="nav-item active"
+              data-section="overview"
+            >
+              <span class="nav-icon">⌂</span>
+              <span>Dashboard</span>
+            </button>
+
+            <button type="button" class="nav-item" data-section="songs">
+              <span class="nav-icon">♫</span>
+              <span>My Songs</span>
+            </button>
+
+            <button type="button" class="nav-item" data-section="earnings">
+              <span class="nav-icon">LD</span>
+              <span>Earnings</span>
+            </button>
+
+            <button type="button" class="nav-item" data-section="withdrawals">
+              <span class="nav-icon">↗</span>
+              <span>Withdrawals</span>
+            </button>
+
+            <button type="button" class="nav-item" data-section="profile">
+              <span class="nav-icon">◉</span>
+              <span>Artist Profile</span>
+            </button>
+          </nav>
+        </div>
+
+        <!-- =================================================
+           SIDEBAR BOTTOM
+      ================================================== -->
+
+        <div class="artist-sidebar-footer">
+          <!-- LISTEN AS ARTIST -->
+
+          <button
+            type="button"
+            id="listenMusicButton"
+            class="listen-music-button"
+            onclick="goToListenerDashboard()"
+          >
+            <span class="nav-icon">🎧</span>
+            <span>Listen to Music</span>
+          </button>
+
+          <!-- LOGOUT -->
+
+          <button type="button" id="logoutButton" class="artist-logout">
+            <span>⇥</span>
+            <span>Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- ===================================================
+         MAIN CONTENT
+    ==================================================== -->
+
+      <main class="artist-main">
+        <!-- =================================================
+           HEADER
+      ================================================== -->
+
+        <header class="artist-header">
+          <div class="header-left">
+            <!-- MOBILE MENU -->
+
+            <button
+              type="button"
+              id="mobileMenuButton"
+              class="mobile-menu-button"
+              aria-label="Open menu"
+              aria-controls="artistSidebar"
+              aria-expanded="false"
+            >
+              ☰
+            </button>
+
+            <!-- TITLE -->
+
+            <div class="header-title">
+              <p class="artist-header-label">ARTIST DASHBOARD</p>
+
+              <h1>
+                Welcome,
+                <span id="headerArtistName">Artist</span>
+              </h1>
+
+              <p>Manage your music, earnings and artist account.</p>
+            </div>
+          </div>
+
+          <!-- HEADER RIGHT -->
+
+          <div class="header-right">
+            <!-- REFRESH -->
+
+            <button
+              type="button"
+              id="refreshDashboardButton"
+              class="refresh-button"
+              title="Refresh dashboard"
+              aria-label="Refresh dashboard"
+            >
+              ↻
+            </button>
+
+            <!-- STATUS -->
+
+            <div id="artistStatus" class="artist-status status-unknown">
+              UNKNOWN
+            </div>
+          </div>
+        </header>
+
+        <!-- =================================================
+           GLOBAL MESSAGE
+      ================================================== -->
+
+        <div
+          id="dashboardMessage"
+          class="dashboard-message hidden"
+          role="alert"
+        ></div>
+
+        <!-- =================================================
+           LOADING
+      ================================================== -->
+
+        <div id="loading" class="dashboard-loading">
+          <div class="loading-spinner"></div>
+
+          <p>Loading artist dashboard...</p>
+        </div>
+
+        <!-- =================================================
+           DASHBOARD CONTENT
+      ================================================== -->
+
+        <section id="dashboardContent" class="dashboard-content">
+          <!-- =================================================
+             OVERVIEW
+        ================================================== -->
+
+          <section
+            id="overviewSection"
+            class="dashboard-section active-section"
+          >
+            <div class="section-heading">
+              <div>
+                <p class="section-label">OVERVIEW</p>
+
+                <h3>Your Music Dashboard</h3>
+
+                <p class="section-description">
+                  Track your music, sales and earnings.
+                </p>
+              </div>
+            </div>
+
+            <!-- STATISTICS -->
+
+            <div class="stats-grid">
+              <!-- SONGS -->
+
+              <article class="stat-card">
+                <div class="stat-card-top">
+                  <span class="stat-title"> Songs Uploaded </span>
+
+                  <span class="stat-icon"> ♫ </span>
+                </div>
+
+                <strong id="songsUploaded" class="stat-value"> 0 </strong>
+              </article>
+
+              <!-- SALES -->
+
+              <article class="stat-card">
+                <div class="stat-card-top">
+                  <span class="stat-title"> Total Sales </span>
+
+                  <span class="stat-icon"> ◉ </span>
+                </div>
+
+                <strong id="totalSales" class="stat-value"> 0 </strong>
+              </article>
+
+              <!-- REVENUE -->
+
+              <article class="stat-card">
+                <div class="stat-card-top">
+                  <span class="stat-title"> Total Revenue </span>
+
+                  <span class="stat-icon"> LD </span>
+                </div>
+
+                <strong id="totalRevenue" class="stat-value"> 0 LD </strong>
+              </article>
+
+              <!-- ARTIST EARNINGS -->
+
+              <article class="stat-card">
+                <div class="stat-card-top">
+                  <span class="stat-title"> Artist Earnings </span>
+
+                  <span class="stat-icon"> $ </span>
+                </div>
+
+                <strong id="artistRevenue" class="stat-value"> 0 LD </strong>
+              </article>
+            </div>
+
+            <!-- =================================================
+               WALLET
+          ================================================== -->
+
+            <div class="wallet-card">
+              <div class="wallet-header">
+                <div>
+                  <p class="section-label">WALLET</p>
+
+                  <h3>Available Balance</h3>
+                </div>
+
+                <span class="wallet-icon"> LD </span>
+              </div>
+
+              <div class="wallet-balance">
+                <span id="walletBalanceLarge"> 0 LD </span>
+              </div>
+
+              <div class="wallet-details">
+                <div class="wallet-detail">
+                  <span> Available Balance </span>
+
+                  <strong id="walletBalance"> 0 LD </strong>
+                </div>
+
+                <div class="wallet-detail">
+                  <span> Total Earned </span>
+
+                  <strong id="totalEarned"> 0 LD </strong>
+                </div>
+              </div>
+
+              <button type="button" id="withdrawButton" class="primary-button">
+                Request Withdrawal
+              </button>
+            </div>
+          </section>
+
+          <!-- =================================================
+             SONGS
+        ================================================== -->
+
+          <section id="songsSection" class="dashboard-section">
+            <div class="section-heading section-heading-with-action">
+              <div>
+                <p class="section-label">MUSIC</p>
+
+                <h3>My Songs</h3>
+
+                <p class="section-description">
+                  Manage the music you have uploaded to KOLO MUSIC.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                id="uploadSongButton"
+                class="primary-button"
+              >
+                + Upload Song
+              </button>
+            </div>
+
+            <div id="songsContainer" class="songs-container">
+              <div class="empty-state">
+                <div class="empty-icon">♫</div>
+
+                <h4>No songs uploaded yet</h4>
+
+                <p>Your uploaded songs will appear here.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================
+             EARNINGS
+        ================================================== -->
+
+          <section id="earningsSection" class="dashboard-section">
+            <div class="section-heading">
+              <div>
+                <p class="section-label">FINANCES</p>
+
+                <h3>Earnings</h3>
+
+                <p class="section-description">
+                  View your song sales and artist earnings.
+                </p>
+              </div>
+            </div>
+
+            <div id="salesContainer" class="sales-container">
+              <div class="empty-state">
+                <div class="empty-icon">LD</div>
+
+                <h4>No sales yet</h4>
+
+                <p>Approved song payments will appear here.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================
+             WITHDRAWALS
+        ================================================== -->
+
+          <section id="withdrawalsSection" class="dashboard-section">
+            <div class="section-heading">
+              <div>
+                <p class="section-label">PAYOUTS</p>
+
+                <h3>Withdrawals</h3>
+
+                <p class="section-description">
+                  Track your withdrawal requests and payout status.
+                </p>
+              </div>
+            </div>
+
+            <div id="withdrawalsContainer" class="withdrawals-container">
+              <div class="empty-state">
+                <div class="empty-icon">↗</div>
+
+                <h4>No withdrawals yet</h4>
+
+                <p>Your withdrawal requests will appear here.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- =================================================
+             ARTIST PROFILE
+        ================================================== -->
+
+          <section id="profileSection" class="dashboard-section">
+            <div class="section-heading">
+              <div>
+                <p class="section-label">PROFILE</p>
+
+                <h3>Artist Profile</h3>
+
+                <p class="section-description">
+                  Your KOLO MUSIC artist account information.
+                </p>
+              </div>
+            </div>
+
+            <div class="profile-card">
+              <div class="profile-avatar">
+                <span id="profileAvatarLetter"> A </span>
+              </div>
+
+              <div class="profile-information">
+                <div class="profile-row">
+                  <span> Artist Name </span>
+
+                  <strong id="profileArtistName"> Artist </strong>
+                </div>
+
+                <div class="profile-row">
+                  <span> Account Status </span>
+
+                  <strong id="profileArtistStatus"> Unknown </strong>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <!-- =====================================================
+       WITHDRAWAL MODAL
+  ====================================================== -->
+
+    <div id="withdrawModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-backdrop" id="withdrawModalBackdrop"></div>
+
+      <div
+        class="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="withdrawModalTitle"
+      >
+        <button
+          type="button"
+          id="closeWithdrawModal"
+          class="modal-close"
+          aria-label="Close withdrawal window"
+        >
+          ×
+        </button>
+
+        <div class="modal-header">
+          <p class="section-label">PAYOUT</p>
+
+          <h3 id="withdrawModalTitle">Request Withdrawal</h3>
+
+          <p>
+            Enter the amount you want to withdraw from your available balance.
+          </p>
+        </div>
+
+        <form id="withdrawForm">
+          <div class="form-group">
+            <label for="withdrawAmount"> Amount (LD) </label>
+
+            <input
+              type="number"
+              id="withdrawAmount"
+              name="amount"
+              min="1"
+              step="1"
+              inputmode="numeric"
+              placeholder="Enter amount"
+              required
+            />
+          </div>
+
+          <div class="withdraw-balance-info">
+            Available:
+
+            <strong id="withdrawAvailableBalance"> 0 LD </strong>
+          </div>
+
+          <p id="withdrawMessage" class="form-message" role="alert"></p>
+
+          <button
+            type="submit"
+            id="submitWithdrawalButton"
+            class="primary-button full-width"
+          >
+            Submit Withdrawal
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- =====================================================
+       UPLOAD SONG MODAL
+  ====================================================== -->
+
+    <div id="uploadSongModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-backdrop" id="uploadSongModalBackdrop"></div>
+
+      <div
+        class="modal-content upload-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="uploadSongModalTitle"
+      >
+        <button
+          type="button"
+          id="closeUploadSongModal"
+          class="modal-close"
+          aria-label="Close upload window"
+        >
+          ×
+        </button>
+
+        <div class="modal-header">
+          <p class="section-label">MUSIC</p>
+
+          <h3 id="uploadSongModalTitle">Upload New Song</h3>
+
+          <p>Upload your song for admin review.</p>
+        </div>
+
+        <form id="uploadSongForm">
+          <!-- SONG TITLE -->
+
+          <div class="form-group">
+            <label for="songTitle"> Song Title </label>
+
+            <input
+              type="text"
+              id="songTitle"
+              name="title"
+              placeholder="Enter song title"
+              maxlength="150"
+              required
+            />
+          </div>
+
+          <!-- DESCRIPTION -->
+
+          <div class="form-group">
+            <label for="songDescription"> Description </label>
+
+            <textarea
+              id="songDescription"
+              name="description"
+              rows="4"
+              maxlength="1000"
+              placeholder="Tell listeners about this song..."
+            ></textarea>
+          </div>
+
+          <!-- COVER -->
+
+          <div class="form-group">
+            <label for="songCover"> Cover Image </label>
+
+            <input
+              type="file"
+              id="songCover"
+              name="cover"
+              accept="image/jpeg,image/png,image/webp"
+              required
+            />
+
+            <small> JPG, PNG or WEBP recommended. </small>
+          </div>
+
+          <!-- AUDIO -->
+
+          <div class="form-group">
+            <label for="songAudio"> Audio File </label>
+
+            <input
+              type="file"
+              id="songAudio"
+              name="audio"
+              accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg"
+              required
+            />
+
+            <small> Upload the final version of your song. </small>
+          </div>
+
+          <!-- UPLOAD MESSAGE -->
+
+          <p id="uploadSongMessage" class="form-message" role="alert"></p>
+
+          <!-- SUBMIT -->
+
+          <button
+            type="submit"
+            id="submitUploadSongButton"
+            class="primary-button full-width"
+          >
+            Upload Song
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- =====================================================
+       JAVASCRIPT
+  ====================================================== -->
+
+    <script src="js/api.js"></script>
+    <script src="js/artist.js"></script>
+  </body>
+</html>
+```

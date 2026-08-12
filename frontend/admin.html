@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>KOLO MUSIC - Admin Dashboard</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+```
+
+</head>
+
+<body>
+
+```
+<!-- ==========================================
+     ADMIN HEADER
+=========================================== -->
+
+<header class="admin-header">
+
+    <div class="admin-header-left">
+
+        <h1>KOLO MUSIC</h1>
+
+        <span class="admin-label">
+            ADMIN DASHBOARD
+        </span>
+
+    </div>
+
+    <div class="admin-header-right">
+
+        <span id="adminWelcome">
+            Welcome, Administrator
+        </span>
+
+        <button
+            type="button"
+            id="logoutButton"
+            class="admin-button logout-button"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ==========================================
+     MAIN ADMIN CONTENT
+=========================================== -->
+
+<main class="admin-container">
+
+
+    <!-- ======================================
+         PAGE TITLE
+    ======================================= -->
+
+    <section class="admin-page-title">
+
+        <div>
+
+            <h2>
+                Platform Operations
+            </h2>
+
+            <p>
+                Manage KOLO MUSIC payments, songs,
+                artists, and withdrawals.
+            </p>
+
+        </div>
+
+        <button
+            type="button"
+            id="refreshDashboardButton"
+            class="admin-button"
+        >
+            Refresh
+        </button>
+
+    </section>
+
+
+    <!-- ======================================
+         DASHBOARD STATISTICS
+    ======================================= -->
+
+    <section class="admin-stats-section">
+
+        <div class="admin-stat-card">
+
+            <span class="admin-stat-label">
+                Total Users
+            </span>
+
+            <strong
+                id="totalUsers"
+                class="admin-stat-value"
+            >
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="admin-stat-card">
+
+            <span class="admin-stat-label">
+                Approved Payments
+            </span>
+
+            <strong
+                id="totalPayments"
+                class="admin-stat-value"
+            >
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="admin-stat-card">
+
+            <span class="admin-stat-label">
+                Pending Payments
+            </span>
+
+            <strong
+                id="pendingPayments"
+                class="admin-stat-value"
+            >
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="admin-stat-card">
+
+            <span class="admin-stat-label">
+                Total Revenue
+            </span>
+
+            <strong
+                id="totalRevenue"
+                class="admin-stat-value"
+            >
+                0 LD
+            </strong>
+
+        </div>
+
+
+        <div class="admin-stat-card">
+
+            <span class="admin-stat-label">
+                KOLO Platform Revenue
+            </span>
+
+            <strong
+                id="platformRevenue"
+                class="admin-stat-value"
+            >
+                0 LD
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================
+         PAYMENT MANAGEMENT
+    ======================================= -->
+
+    <section class="admin-section">
+
+        <div class="admin-section-header">
+
+            <div>
+
+                <h2>
+                    Payment Management
+                </h2>
+
+                <p>
+                    Review and approve KOLO SCREAM payments.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="paymentsContainer"
+            class="admin-grid"
+        >
+
+            <div class="admin-card">
+
+                <p>
+                    Loading payments...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================
+         SONG MANAGEMENT
+    ======================================= -->
+
+    <section class="admin-section">
+
+        <div class="admin-section-header">
+
+            <div>
+
+                <h2>
+                    Song Management
+                </h2>
+
+                <p>
+                    Monitor songs uploaded by artists.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="songsContainer"
+            class="admin-grid"
+        >
+
+            <div class="admin-card">
+
+                <p>
+                    Loading songs...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================
+         ARTIST MANAGEMENT
+    ======================================= -->
+
+    <section class="admin-section">
+
+        <div class="admin-section-header">
+
+            <div>
+
+                <h2>
+                    Artist Management
+                </h2>
+
+                <p>
+                    Review artist applications and control
+                    who can publish music on KOLO MUSIC.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Artist statistics -->
+
+        <div class="artist-management-summary">
+
+            <div class="artist-summary-card">
+
+                <span>
+                    Pending Artists
+                </span>
+
+                <strong id="pendingArtistCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="artist-summary-card">
+
+                <span>
+                    Approved Artists
+                </span>
+
+                <strong id="approvedArtistCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="artist-summary-card">
+
+                <span>
+                    Rejected Artists
+                </span>
+
+                <strong id="rejectedArtistCount">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Artist list -->
+
+        <div
+            id="artistsContainer"
+            class="admin-grid"
+        >
+
+            <div class="admin-card">
+
+                <p>
+                    Loading artists...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================
+         WITHDRAWAL MANAGEMENT
+    ======================================= -->
+
+    <section class="admin-section">
+
+        <div class="admin-section-header">
+
+            <div>
+
+                <h2>
+                    Withdrawal Management
+                </h2>
+
+                <p>
+                    Review artist withdrawal requests.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="withdrawalsContainer"
+            class="admin-grid"
+        >
+
+            <div class="admin-card">
+
+                <p>
+                    Loading withdrawals...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================
+         ADMIN OPERATIONS
+    ======================================= -->
+
+    <section class="admin-section admin-info-section">
+
+        <div class="admin-section-header">
+
+            <div>
+
+                <h2>
+                    Platform Operations
+                </h2>
+
+                <p>
+                    KOLO MUSIC administrative controls.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="admin-operation-grid">
+
+            <div class="admin-operation-card">
+
+                <h3>
+                    Payments
+                </h3>
+
+                <p>
+                    Verify customer payments before
+                    granting access to a scream.
+                </p>
+
+            </div>
+
+
+            <div class="admin-operation-card">
+
+                <h3>
+                    Songs
+                </h3>
+
+                <p>
+                    Monitor uploaded songs and ensure
+                    only approved content reaches users.
+                </p>
+
+            </div>
+
+
+            <div class="admin-operation-card">
+
+                <h3>
+                    Artists
+                </h3>
+
+                <p>
+                    Manage artist registrations and
+                    approval status.
+                </p>
+
+            </div>
+
+
+            <div class="admin-operation-card">
+
+                <h3>
+                    Withdrawals
+                </h3>
+
+                <p>
+                    Review artist earnings and
+                    withdrawal requests.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- ==========================================
+     FOOTER
+=========================================== -->
+
+<footer class="admin-footer">
+
+    <p>
+        KOLO MUSIC Admin Dashboard
+    </p>
+
+    <p>
+        Manage. Approve. Protect the platform.
+    </p>
+
+</footer>
+
+
+<!-- ==========================================
+     KOLO API
+=========================================== -->
+
+<script src="js/api.js"></script>
+
+<!-- ==========================================
+     ADMIN JAVASCRIPT
+=========================================== -->
+
+<script src="js/admin.js"></script>
+```
+
+</body>
+</html>
