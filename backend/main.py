@@ -19,9 +19,10 @@ app.add_middleware(
     CORSMiddleware,
 
     allow_origins=[
-        "http://127.0.0.1:5500",
-        "http://localhost:5500"
-    ],
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+    "https://kolo-music-gg3rtop45-kolo-music.vercel.app"
+],
 
     allow_credentials=True,
 
