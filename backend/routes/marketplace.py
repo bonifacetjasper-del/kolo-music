@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from database import supabase
+from backend.database import supabase
 
 
 # ==========================================

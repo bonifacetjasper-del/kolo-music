@@ -35,27 +35,25 @@ app.add_middleware(
 )
 
 # =========================================================
-# API ROUTES
+# ROUTES
 # =========================================================
 
-API_PREFIX = "/api"
-
-app.include_router(auth.router, prefix=API_PREFIX)
-app.include_router(admin.router, prefix=API_PREFIX)
-app.include_router(songs.router, prefix=API_PREFIX)
-app.include_router(payments.router, prefix=API_PREFIX)
-app.include_router(stream.router, prefix=API_PREFIX)
-app.include_router(artist.router, prefix=API_PREFIX)
-app.include_router(listener.router, prefix=API_PREFIX)
-app.include_router(marketplace.router, prefix=API_PREFIX)
+app.include_router(auth.router)
+app.include_router(admin.router)
+app.include_router(songs.router)
+app.include_router(payments.router)
+app.include_router(stream.router)
+app.include_router(artist.router)
+app.include_router(listener.router)
+app.include_router(marketplace.router)
 
 # =========================================================
-# API TEST ROUTE
+# API TEST
 # =========================================================
 
 @app.get("/api")
 @app.get("/api/")
 def home():
     return {
-        "message": "KOLO MUSIC backend is running 🎵"
+        "message": "KOLO MUSIC backend is running ??"
     }

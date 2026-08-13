@@ -8,7 +8,7 @@ from fastapi import (
 
 from pydantic import BaseModel
 
-from database import supabase
+from backend.database import supabase
 
 
 

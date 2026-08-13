@@ -1,6 +1,6 @@
 from fastapi import HTTPException, Header
 
-from database import supabase
+from backend.database import supabase
 
 
 

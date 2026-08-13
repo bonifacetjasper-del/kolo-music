@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 
-from database import supabase
-from security import require_admin
+from backend.database import supabase
+from backend.security import require_admin
 
 
 # ==========================================

@@ -429,3 +429,4 @@ def login_user(user: LoginUser):
             status_code=400,
             detail=error_message
         )
+

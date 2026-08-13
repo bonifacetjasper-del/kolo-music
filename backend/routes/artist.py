@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Header
 
 from pydantic import BaseModel
 
-from database import supabase
+from backend.database import supabase
 
 
 # ==========================================

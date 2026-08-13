@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 
-from database import supabase
+from backend.database import supabase
 
 router = APIRouter(
     prefix="/songs",
