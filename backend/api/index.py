@@ -1,15 +1,11 @@
-import sys
-import os
+from fastapi import FastAPI
 
-# Add the backend folder to Python's import path
-backend_path = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
-    "backend"
-)
+app = FastAPI()
 
-if backend_path not in sys.path:
-    sys.path.insert(0, backend_path)
 
-from main import app
 
-from backend.main import app
+@app.get("/api")
+def api_home():
+    return {
+        "message": "KOLO MUSIC API is working 🎵"
+    }
