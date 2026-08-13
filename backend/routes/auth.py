@@ -1,11 +1,15 @@
 
 import os
-import requests
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr
+from supabase import create_client
 
-from backend.database import supabase
+from backend.database import (
+    supabase,
+    SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE_KEY
+)
 
 
 # ==========================================
@@ -268,15 +272,10 @@ def register_user(user: RegisterUser):
         )
 
 
-# ==========================================
-# USER LOGIN
-# ==========================================
-
 @router.post("/login")
 def login_user(user: LoginUser):
 
     try:
-
         # --------------------------------------
         # CLEAN LOGIN INPUT
         # --------------------------------------
@@ -285,143 +284,65 @@ def login_user(user: LoginUser):
         password = user.password
 
         if not email:
-
             raise HTTPException(
                 status_code=400,
                 detail="Email is required"
             )
 
         if not password:
-
             raise HTTPException(
                 status_code=400,
                 detail="Password is required"
             )
 
-        # ======================================
-        # SUPABASE AUTH HTTP LOGIN
-        # ======================================
-
-        auth_url = (
-            f"{SUPABASE_URL}/auth/v1/token"
-            "?grant_type=password"
-        )
+        # --------------------------------------
+        # CREATE A FRESH SUPABASE CLIENT
+        # --------------------------------------
 
         service_key = os.getenv(
             "SUPABASE_SERVICE_ROLE_KEY"
         )
 
         if not service_key:
-
             raise HTTPException(
                 status_code=500,
                 detail="Supabase service key is missing"
             )
 
-        headers = {
-            "apikey": service_key,
-            "Authorization": f"Bearer {service_key}",
-            "Content-Type": "application/json"
-        }
-
-        payload = {
-            "email": email,
-            "password": password
-        }
-
-        response = requests.post(
-            auth_url,
-            headers=headers,
-            json=payload,
-            timeout=15
+        auth_client = create_client(
+            SUPABASE_URL,
+            service_key
         )
 
-        # ======================================
-        # HANDLE AUTH ERRORS
-        # ======================================
+        # --------------------------------------
+        # SUPABASE LOGIN
+        # --------------------------------------
 
-        if response.status_code != 200:
-
-            try:
-                error_data = response.json()
-            except Exception:
-                error_data = {}
-
-            error_message = (
-                error_data.get("msg")
-                or error_data.get("message")
-                or error_data.get("error_description")
-                or error_data.get("error")
-                or "Invalid email or password."
+        auth_response = (
+            auth_client.auth.sign_in_with_password(
+                {
+                    "email": email,
+                    "password": password
+                }
             )
-
-            error_lower = str(
-                error_message
-            ).lower()
-
-            if "email not confirmed" in error_lower:
-
-                raise HTTPException(
-                    status_code=403,
-                    detail=(
-                        "Email not confirmed. "
-                        "Please confirm your email first."
-                    )
-                )
-
-            if (
-                "invalid login credentials" in error_lower
-                or "invalid_credentials" in error_lower
-                or "invalid grant" in error_lower
-            ):
-
-                raise HTTPException(
-                    status_code=401,
-                    detail="Invalid email or password."
-                )
-
-            raise HTTPException(
-                status_code=response.status_code,
-                detail=str(error_message)
-            )
-
-        # ======================================
-        # PARSE AUTH RESPONSE
-        # ======================================
-
-        auth_data = response.json()
-
-        access_token = auth_data.get(
-            "access_token"
         )
 
-        refresh_token = auth_data.get(
-            "refresh_token"
-        )
+        # --------------------------------------
+        # CHECK AUTH RESULT
+        # --------------------------------------
 
-        auth_user = auth_data.get(
-            "user"
-        )
-
-        if not auth_user:
+        if not auth_response.user:
 
             raise HTTPException(
                 status_code=401,
                 detail="Invalid email or password."
             )
 
-        user_id = auth_user.get("id")
+        user_id = auth_response.user.id
 
-        if not user_id:
-
-            raise HTTPException(
-                status_code=401,
-                detail="Authentication failed."
-            )
-
-        # ======================================
+        # --------------------------------------
         # GET USER PROFILE
-        # ======================================
+        # --------------------------------------
 
         profile_response = (
             supabase
@@ -436,10 +357,6 @@ def login_user(user: LoginUser):
             .execute()
         )
 
-        # --------------------------------------
-        # PROFILE DOES NOT EXIST
-        # --------------------------------------
-
         if not profile_response.data:
 
             raise HTTPException(
@@ -452,9 +369,22 @@ def login_user(user: LoginUser):
 
         profile = profile_response.data[0]
 
-        # ======================================
-        # LOGIN SUCCESS
-        # ======================================
+        # --------------------------------------
+        # GET TOKENS
+        # --------------------------------------
+
+        session = auth_response.session
+
+        access_token = None
+        refresh_token = None
+
+        if session:
+            access_token = session.access_token
+            refresh_token = session.refresh_token
+
+        # --------------------------------------
+        # SUCCESS
+        # --------------------------------------
 
         print("================================")
         print("LOGIN SUCCESS")
@@ -464,13 +394,9 @@ def login_user(user: LoginUser):
 
         return {
             "message": "Login successful",
-
             "access_token": access_token,
-
             "refresh_token": refresh_token,
-
             "token_type": "bearer",
-
             "user": {
                 "id": profile["id"],
                 "full_name": profile["full_name"],
@@ -479,27 +405,8 @@ def login_user(user: LoginUser):
             }
         }
 
-    # ======================================
-    # EXPECTED ERRORS
-    # ======================================
-
     except HTTPException:
         raise
-
-    # ======================================
-    # UNEXPECTED ERRORS
-    # ======================================
-
-    except requests.RequestException as e:
-
-        print("================================")
-        print("SUPABASE AUTH REQUEST ERROR:", repr(e))
-        print("================================")
-
-        raise HTTPException(
-            status_code=502,
-            detail="Unable to connect to Supabase authentication."
-        )
 
     except Exception as e:
 
@@ -507,7 +414,56 @@ def login_user(user: LoginUser):
         print("LOGIN ERROR:", repr(e))
         print("================================")
 
+        error_message = str(e)
+        error_lower = error_message.lower()
+
+        # --------------------------------------
+        # EMAIL NOT CONFIRMED
+        # --------------------------------------
+
+        if "email not confirmed" in error_lower:
+
+            raise HTTPException(
+                status_code=403,
+                detail=(
+                    "Email not confirmed. "
+                    "Please confirm your email first."
+                )
+            )
+
+        # --------------------------------------
+        # INVALID CREDENTIALS
+        # --------------------------------------
+
+        if (
+            "invalid login credentials" in error_lower
+            or "invalid_credentials" in error_lower
+            or "invalid grant" in error_lower
+        ):
+
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid email or password."
+            )
+
+        # --------------------------------------
+        # CONNECTION ERROR
+        # --------------------------------------
+
+        if (
+            "connecterror" in error_lower
+            or "connection" in error_lower
+            or "device or resource busy" in error_lower
+        ):
+
+            raise HTTPException(
+                status_code=502,
+                detail=(
+                    "Unable to connect to Supabase authentication."
+                )
+            )
+
         raise HTTPException(
             status_code=400,
-            detail=str(e)
+            detail=error_message
         )
