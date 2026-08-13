@@ -1,4 +1,7 @@
 
+import os
+import requests
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr
 
@@ -8,23 +11,21 @@ from backend.database import supabase
 # ==========================================
 # KOLO MUSIC AUTHENTICATION ROUTES
 # ==========================================
-#
-# Handles:
-# - Listener registration
-# - Artist registration
-# - User login
-#
-# Routes:
-# POST /auth/register
-# POST /auth/login
-#
-# ==========================================
-
 
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
 )
+
+
+# ==========================================
+# SUPABASE CONFIGURATION
+# ==========================================
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+
+if not SUPABASE_URL:
+    raise RuntimeError("SUPABASE_URL is missing")
 
 
 # ==========================================
@@ -68,7 +69,7 @@ def register_user(user: RegisterUser):
         role = user.role.strip().lower()
 
         # --------------------------------------
-        # VALIDATE BASIC INFORMATION
+        # BASIC VALIDATION
         # --------------------------------------
 
         if not full_name:
@@ -94,7 +95,7 @@ def register_user(user: RegisterUser):
             )
 
         # --------------------------------------
-        # VALIDATE ARTIST INFORMATION
+        # VALIDATE ARTIST
         # --------------------------------------
 
         artist_name = None
@@ -126,11 +127,8 @@ def register_user(user: RegisterUser):
             }
         )
 
-        # --------------------------------------
-        # CHECK AUTH RESPONSE
-        # --------------------------------------
-
         if not auth_response.user:
+
             raise HTTPException(
                 status_code=400,
                 detail="Unable to create authentication account"
@@ -157,6 +155,7 @@ def register_user(user: RegisterUser):
         )
 
         if not profile_response.data:
+
             raise HTTPException(
                 status_code=400,
                 detail=(
@@ -186,6 +185,7 @@ def register_user(user: RegisterUser):
             )
 
             if not artist_response.data:
+
                 raise HTTPException(
                     status_code=400,
                     detail="Artist account could not be created"
@@ -209,6 +209,7 @@ def register_user(user: RegisterUser):
             )
 
             if not wallet_response.data:
+
                 raise HTTPException(
                     status_code=400,
                     detail="Artist wallet could not be created"
@@ -245,7 +246,6 @@ def register_user(user: RegisterUser):
         error_message = str(e)
         error_lower = error_message.lower()
 
-        # Duplicate account
         if (
             "already registered" in error_lower
             or "already exists" in error_lower
@@ -255,8 +255,8 @@ def register_user(user: RegisterUser):
                 detail="An account with this email already exists"
             )
 
-        # Email signups disabled
         if "email signups are disabled" in error_lower:
+
             raise HTTPException(
                 status_code=400,
                 detail="Email signups are disabled in Supabase."
@@ -285,41 +285,139 @@ def login_user(user: LoginUser):
         password = user.password
 
         if not email:
+
             raise HTTPException(
                 status_code=400,
                 detail="Email is required"
             )
 
         if not password:
+
             raise HTTPException(
                 status_code=400,
                 detail="Password is required"
             )
 
         # ======================================
-        # SUPABASE AUTHENTICATION
+        # SUPABASE AUTH HTTP LOGIN
         # ======================================
 
-        auth_response = (
-            supabase.auth.sign_in_with_password(
-                {
-                    "email": email,
-                    "password": password
-                }
+        auth_url = (
+            f"{SUPABASE_URL}/auth/v1/token"
+            "?grant_type=password"
+        )
+
+        service_key = os.getenv(
+            "SUPABASE_SERVICE_ROLE_KEY"
+        )
+
+        if not service_key:
+
+            raise HTTPException(
+                status_code=500,
+                detail="Supabase service key is missing"
             )
+
+        headers = {
+            "apikey": service_key,
+            "Authorization": f"Bearer {service_key}",
+            "Content-Type": "application/json"
+        }
+
+        payload = {
+            "email": email,
+            "password": password
+        }
+
+        response = requests.post(
+            auth_url,
+            headers=headers,
+            json=payload,
+            timeout=15
         )
 
         # ======================================
-        # CHECK AUTHENTICATION RESULT
+        # HANDLE AUTH ERRORS
         # ======================================
 
-        if not auth_response.user:
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid email or password"
+        if response.status_code != 200:
+
+            try:
+                error_data = response.json()
+            except Exception:
+                error_data = {}
+
+            error_message = (
+                error_data.get("msg")
+                or error_data.get("message")
+                or error_data.get("error_description")
+                or error_data.get("error")
+                or "Invalid email or password."
             )
 
-        user_id = auth_response.user.id
+            error_lower = str(
+                error_message
+            ).lower()
+
+            if "email not confirmed" in error_lower:
+
+                raise HTTPException(
+                    status_code=403,
+                    detail=(
+                        "Email not confirmed. "
+                        "Please confirm your email first."
+                    )
+                )
+
+            if (
+                "invalid login credentials" in error_lower
+                or "invalid_credentials" in error_lower
+                or "invalid grant" in error_lower
+            ):
+
+                raise HTTPException(
+                    status_code=401,
+                    detail="Invalid email or password."
+                )
+
+            raise HTTPException(
+                status_code=response.status_code,
+                detail=str(error_message)
+            )
+
+        # ======================================
+        # PARSE AUTH RESPONSE
+        # ======================================
+
+        auth_data = response.json()
+
+        access_token = auth_data.get(
+            "access_token"
+        )
+
+        refresh_token = auth_data.get(
+            "refresh_token"
+        )
+
+        auth_user = auth_data.get(
+            "user"
+        )
+
+        if not auth_user:
+
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid email or password."
+            )
+
+        user_id = auth_user.get("id")
+
+        if not user_id:
+
+            raise HTTPException(
+                status_code=401,
+                detail="Authentication failed."
+            )
 
         # ======================================
         # GET USER PROFILE
@@ -343,6 +441,7 @@ def login_user(user: LoginUser):
         # --------------------------------------
 
         if not profile_response.data:
+
             raise HTTPException(
                 status_code=404,
                 detail=(
@@ -365,6 +464,13 @@ def login_user(user: LoginUser):
 
         return {
             "message": "Login successful",
+
+            "access_token": access_token,
+
+            "refresh_token": refresh_token,
+
+            "token_type": "bearer",
+
             "user": {
                 "id": profile["id"],
                 "full_name": profile["full_name"],
@@ -381,8 +487,19 @@ def login_user(user: LoginUser):
         raise
 
     # ======================================
-    # SUPABASE / UNEXPECTED ERRORS
+    # UNEXPECTED ERRORS
     # ======================================
+
+    except requests.RequestException as e:
+
+        print("================================")
+        print("SUPABASE AUTH REQUEST ERROR:", repr(e))
+        print("================================")
+
+        raise HTTPException(
+            status_code=502,
+            detail="Unable to connect to Supabase authentication."
+        )
 
     except Exception as e:
 
@@ -390,43 +507,7 @@ def login_user(user: LoginUser):
         print("LOGIN ERROR:", repr(e))
         print("================================")
 
-        error_message = str(e)
-        error_lower = error_message.lower()
-
-        # --------------------------------------
-        # EMAIL NOT CONFIRMED
-        # --------------------------------------
-
-        if "email not confirmed" in error_lower:
-
-            raise HTTPException(
-                status_code=403,
-                detail=(
-                    "Email not confirmed. "
-                    "Please confirm your email first."
-                )
-            )
-
-        # --------------------------------------
-        # INVALID CREDENTIALS
-        # --------------------------------------
-
-        if (
-            "invalid login credentials" in error_lower
-            or "invalid_credentials" in error_lower
-        ):
-
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid email or password."
-            )
-
-        # --------------------------------------
-        # OTHER ERROR
-        # --------------------------------------
-
         raise HTTPException(
             status_code=400,
-            detail=error_message
+            detail=str(e)
         )
-
