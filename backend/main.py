@@ -55,9 +55,9 @@ app.include_router(marketplace.router)
 # HOME TEST ROUTE
 # ==============================
 
-@app.get("/")
+@app.get("/api")
+@app.get("/api/")
 def home():
-
     return {
         "message": "KOLO MUSIC backend is running 🎵"
     }
