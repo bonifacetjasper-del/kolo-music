@@ -38,6 +38,7 @@ app.add_middleware(
 # ROUTES
 # =========================================================
 
+# Local / direct API routes
 app.include_router(auth.router)
 app.include_router(admin.router)
 app.include_router(songs.router)
@@ -47,6 +48,17 @@ app.include_router(artist.router)
 app.include_router(listener.router)
 app.include_router(marketplace.router)
 
+# Vercel production API routes
+# Supports /api/auth/login, /api/songs, /api/artist, etc.
+app.include_router(auth.router, prefix="/api")
+app.include_router(admin.router, prefix="/api")
+app.include_router(songs.router, prefix="/api")
+app.include_router(payments.router, prefix="/api")
+app.include_router(stream.router, prefix="/api")
+app.include_router(artist.router, prefix="/api")
+app.include_router(listener.router, prefix="/api")
+app.include_router(marketplace.router, prefix="/api")
+
 # =========================================================
 # API TEST
 # =========================================================
@@ -55,5 +67,5 @@ app.include_router(marketplace.router)
 @app.get("/api/")
 def home():
     return {
-        "message": "KOLO MUSIC backend is running ??"
+        "message": "KOLO MUSIC backend is running"
     }
