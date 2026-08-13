@@ -2,7 +2,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr
 
-from database import supabase
+from backend.database import supabase
 
 
 # ==========================================
