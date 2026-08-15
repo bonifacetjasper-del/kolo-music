@@ -1,3 +1,350 @@
+﻿
+/* ==========================================
+   PLATFORM SETTINGS MANAGEMENT
+========================================== */
+
+async function loadPlatformSettings() {
+
+    const status = document.getElementById("settingsStatus");
+
+    try {
+
+        if (status) {
+            status.textContent = "Loading settings...";
+            status.className = "settings-status";
+        }
+
+        const response = await adminGet("/settings");
+
+        const settings = response?.settings || response;
+
+        if (!settings) {
+            throw new Error("Platform settings were not returned.");
+        }
+
+        const screamPrice =
+            document.getElementById("settingScreamPrice");
+
+        const platformFee =
+            document.getElementById("settingPlatformFee");
+
+        const artistPercent =
+            document.getElementById("settingArtistPercent");
+
+        const listenerRegistration =
+            document.getElementById("settingListenerRegistration");
+
+        const artistRegistration =
+            document.getElementById("settingArtistRegistration");
+
+        const maintenanceMode =
+            document.getElementById("settingMaintenanceMode");
+
+        const homepageTitle =
+            document.getElementById("settingHomepageTitle");
+
+        const homepageMessage =
+            document.getElementById("settingHomepageMessage");
+
+
+        if (screamPrice) {
+            screamPrice.value =
+                settings.scream_price ?? "";
+        }
+
+        if (platformFee) {
+            platformFee.value =
+                settings.platform_fee_percent ?? "";
+        }
+
+        if (artistPercent) {
+            artistPercent.value =
+                settings.artist_percent ?? "";
+        }
+
+        if (listenerRegistration) {
+            listenerRegistration.checked =
+                Boolean(settings.listener_registration_enabled);
+        }
+
+        if (artistRegistration) {
+            artistRegistration.checked =
+                Boolean(settings.artist_registration_enabled);
+        }
+
+        if (maintenanceMode) {
+            maintenanceMode.checked =
+                Boolean(settings.maintenance_mode);
+        }
+
+        if (homepageTitle) {
+            homepageTitle.value =
+                settings.homepage_title ?? "";
+        }
+
+        if (homepageMessage) {
+            homepageMessage.value =
+                settings.homepage_message ?? "";
+        }
+
+        if (status) {
+            status.textContent =
+                "Settings loaded successfully.";
+
+            status.className =
+                "settings-status settings-success";
+        }
+
+        console.log(
+            "Platform settings loaded:",
+            settings
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Platform settings loading error:",
+            error
+        );
+
+        if (status) {
+
+            status.textContent =
+                error.message ||
+                "Unable to load platform settings.";
+
+            status.className =
+                "settings-status settings-error";
+        }
+    }
+}
+
+
+/* ==========================================
+   SAVE PLATFORM SETTINGS
+========================================== */
+
+async function savePlatformSettings() {
+
+    const status =
+        document.getElementById("settingsStatus");
+
+    const saveButton =
+        document.getElementById("saveSettingsButton");
+
+    try {
+
+        if (saveButton) {
+            saveButton.disabled = true;
+            saveButton.textContent = "Saving...";
+        }
+
+        if (status) {
+            status.textContent = "Saving settings...";
+            status.className = "settings-status";
+        }
+
+
+        const screamPrice =
+            Number(
+                document.getElementById(
+                    "settingScreamPrice"
+                )?.value
+            );
+
+        const platformFee =
+            Number(
+                document.getElementById(
+                    "settingPlatformFee"
+                )?.value
+            );
+
+        const artistPercent =
+            Number(
+                document.getElementById(
+                    "settingArtistPercent"
+                )?.value
+            );
+
+
+        if (!Number.isFinite(screamPrice) || screamPrice <= 0) {
+            throw new Error(
+                "Scream price must be greater than 0."
+            );
+        }
+
+        if (
+            !Number.isFinite(platformFee) ||
+            platformFee < 0 ||
+            platformFee > 100
+        ) {
+            throw new Error(
+                "Platform fee must be between 0 and 100."
+            );
+        }
+
+        if (
+            !Number.isFinite(artistPercent) ||
+            artistPercent < 0 ||
+            artistPercent > 100
+        ) {
+            throw new Error(
+                "Artist share must be between 0 and 100."
+            );
+        }
+
+
+        const listenerRegistration =
+            document.getElementById(
+                "settingListenerRegistration"
+            )?.checked ?? false;
+
+        const artistRegistration =
+            document.getElementById(
+                "settingArtistRegistration"
+            )?.checked ?? false;
+
+        const maintenanceMode =
+            document.getElementById(
+                "settingMaintenanceMode"
+            )?.checked ?? false;
+
+        const homepageTitle =
+            document.getElementById(
+                "settingHomepageTitle"
+            )?.value.trim() || "";
+
+        const homepageMessage =
+            document.getElementById(
+                "settingHomepageMessage"
+            )?.value.trim() || "";
+
+
+        /*
+         * Send settings to FastAPI.
+         */
+
+        const response = await adminPost(
+            "/settings",
+            {
+                scream_price: screamPrice,
+
+                platform_fee_percent:
+                    platformFee,
+
+                artist_percent:
+                    artistPercent,
+
+                listener_registration_enabled:
+                    listenerRegistration,
+
+                artist_registration_enabled:
+                    artistRegistration,
+
+                maintenance_mode:
+                    maintenanceMode,
+
+                homepage_title:
+                    homepageTitle,
+
+                homepage_message:
+                    homepageMessage
+            }
+        );
+
+
+        console.log(
+            "Platform settings saved:",
+            response
+        );
+
+
+        if (status) {
+
+            status.textContent =
+                response?.message ||
+                "Platform settings saved successfully.";
+
+            status.className =
+                "settings-status settings-success";
+        }
+
+
+        /*
+         * Reload the values from the backend
+         * after saving.
+         */
+
+        await loadPlatformSettings();
+
+    } catch (error) {
+
+        console.error(
+            "Platform settings save error:",
+            error
+        );
+
+        if (status) {
+
+            status.textContent =
+                error.message ||
+                "Unable to save platform settings.";
+
+            status.className =
+                "settings-status settings-error";
+        }
+
+    } finally {
+
+        if (saveButton) {
+
+            saveButton.disabled = false;
+            saveButton.textContent =
+                "Save Settings";
+        }
+    }
+}
+
+
+/* ==========================================
+   SETTINGS BUTTON EVENTS
+========================================== */
+
+function initializePlatformSettings() {
+
+    const saveButton =
+        document.getElementById(
+            "saveSettingsButton"
+        );
+
+    const loadButton =
+        document.getElementById(
+            "loadSettingsButton"
+        );
+
+
+    if (saveButton) {
+
+        saveButton.addEventListener(
+            "click",
+            savePlatformSettings
+        );
+    }
+
+
+    if (loadButton) {
+
+        loadButton.addEventListener(
+            "click",
+            loadPlatformSettings
+        );
+    }
+
+
+    loadPlatformSettings();
+}
+
+
 /* ==========================================
    KOLO MUSIC ADMIN DASHBOARD
 ========================================== */
@@ -89,8 +436,7 @@ async function adminGet(endpoint) {
     return await KOLO_API.get(endpoint);
   } catch (error) {
     console.error("Admin GET error:", error);
-
-    return null;
+    throw error;
   }
 }
 
@@ -232,43 +578,169 @@ async function loadAdminPayments() {
                     `;
 
       card.innerHTML = `
-                <div class="admin-card-content">
+                <div class="admin-card-content payment-review-card">
 
-                    <h3>
-                        KOLO SCREAM
-                    </h3>
+                    <div class="payment-review-header">
 
-                    <p>
-                        Amount:
-                        <strong>
-                            ${amount} LD
-                        </strong>
-                    </p>
+                        <div>
+                            <span class="payment-review-label">
+                                KOLO SCREAM
+                            </span>
 
-                    <p>
-                        Payment method:
-                        <strong>
-                            ${escapeHTML(paymentMethod)}
-                        </strong>
-                    </p>
+                            <h3>
+                                ${escapeHTML(payment.song_title || "Music Scream")}
+                            </h3>
+                        </div>
 
-                    <p>
-                        Status:
-                        <strong>
-                            ${escapeHTML(status)}
-                        </strong>
-                    </p>
+                        <span class="payment-status-badge ${escapeHTML(status)}">
+                            ${escapeHTML(status.toUpperCase())}
+                        </span>
 
-                    <p>
-                        Payment ID:
-                        ${escapeHTML(paymentId)}
-                    </p>
+                    </div>
 
-                    ${proofHTML}
+                    <div class="payment-info-section">
 
-                    <div
-                        class="admin-action-buttons"
-                    >
+                        <h4>
+                            Sender Information
+                        </h4>
+
+                        <div class="payment-info-grid">
+
+                            <div class="payment-info-item">
+
+                                <span class="payment-info-label">
+                                    Sender Name
+                                </span>
+
+                                <strong>
+                                    ${escapeHTML(
+                                      payment.sender_name || "Not provided"
+                                    )}
+                                </strong>
+
+                            </div>
+
+                            <div class="payment-info-item">
+
+                                <span class="payment-info-label">
+                                    Mobile Money Number
+                                </span>
+
+                                <strong>
+                                    ${escapeHTML(
+                                      payment.sender_number || "Not provided"
+                                    )}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="payment-info-section">
+
+                        <h4>
+                            Payment Information
+                        </h4>
+
+                        <div class="payment-info-grid">
+
+                            <div class="payment-info-item">
+
+                                <span class="payment-info-label">
+                                    Amount
+                                </span>
+
+                                <strong class="payment-amount">
+                                    ${amount} LD
+                                </strong>
+
+                            </div>
+
+                            <div class="payment-info-item">
+
+                                <span class="payment-info-label">
+                                    Payment Method
+                                </span>
+
+                                <strong>
+                                    ${escapeHTML(paymentMethod)}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="payment-info-section">
+
+                        <h4>
+                            Payment Proof
+                        </h4>
+
+                        <div class="payment-proof-area">
+
+                            ${payment.proof_image
+                              ? `
+                                <a
+                                    href="${escapeHTML(payment.proof_image)}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="payment-proof-button"
+                                >
+                                    View Payment Proof
+                                </a>
+                              `
+                              : `
+                                <p class="no-payment-proof">
+                                    No payment proof uploaded.
+                                </p>
+                              `
+                            }
+
+                        </div>
+
+                    </div>
+
+                    <div class="payment-info-section payment-meta">
+
+                        <div class="payment-meta-row">
+
+                            <span>
+                                Payment ID
+                            </span>
+
+                            <code>
+                                ${escapeHTML(paymentId)}
+                            </code>
+
+                        </div>
+
+                        <div class="payment-meta-row">
+
+                            <span>
+                                Submitted
+                            </span>
+
+                            <span>
+                                ${
+                                  payment.created_at
+                                    ? escapeHTML(
+                                        new Date(
+                                          payment.created_at
+                                        ).toLocaleString()
+                                      )
+                                    : "Unknown"
+                                }
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="admin-action-buttons payment-review-actions">
 
                         <button
                             type="button"
@@ -290,7 +762,6 @@ async function loadAdminPayments() {
 
                 </div>
             `;
-
       container.appendChild(card);
     });
 
@@ -1373,5 +1844,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   connectAdminButtons();
 
+  initializePlatformSettings();
+
   loadAdminDashboard();
 });
+
+
+
+

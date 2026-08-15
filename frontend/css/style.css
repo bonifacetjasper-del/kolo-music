@@ -1662,3 +1662,110 @@ ADMIN RESPONSIVE
     align-items: flex-start;
   }
 }
+
+/* ==========================================
+   KOLO MUSIC LISTENER MOBILE NAVIGATION FIX
+========================================== */
+
+@media (max-width: 600px) {
+
+  body {
+    overflow-x: hidden;
+  }
+
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "logo button"
+      "links links";
+
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .navbar .logo {
+    grid-area: logo;
+
+    font-size: 20px;
+
+    white-space: nowrap;
+  }
+
+  .navbar .nav-buttons {
+    grid-area: button;
+
+    justify-content: flex-end;
+  }
+
+  .navbar .login-btn {
+    padding: 8px 15px;
+
+    font-size: 13px;
+
+    white-space: nowrap;
+  }
+
+  .navbar .nav-links {
+    grid-area: links;
+
+    display: flex;
+
+    width: 100%;
+
+    justify-content: space-between;
+
+    gap: 8px;
+
+    padding-top: 4px;
+  }
+
+  .navbar .nav-links a {
+    flex: 1;
+
+    text-align: center;
+
+    padding: 9px 6px;
+
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    font-size: 13px;
+  }
+
+  .listener-dashboard {
+    padding-top: 25px;
+  }
+
+  .listener-dashboard .music-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .listener-dashboard .music-card {
+    width: 100%;
+  }
+
+  .listener-dashboard .music-card img {
+    display: block;
+
+    width: 100%;
+
+    aspect-ratio: 1 / 1;
+
+    height: auto;
+
+    object-fit: cover;
+
+    background: #222;
+  }
+}
+

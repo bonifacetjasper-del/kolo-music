@@ -1,5 +1,5 @@
-/* =========================================================
-   KOLO MUSIC — LISTENER DASHBOARD
+﻿/* =========================================================
+   KOLO MUSIC - LISTENER DASHBOARD
    =========================================================
 
    Responsibilities:
@@ -12,22 +12,6 @@
    - One-time protected playback
    - Logout
    - Payment modal management
-
-   IMPORTANT:
-
-   LIBRARY:
-   Purchased songs only.
-
-   DISCOVER:
-   All approved songs.
-
-   PURCHASED SONG:
-   Uses:
-       GET /stream/{user_id}/{song_id}
-
-   PAYMENT:
-       POST /payments/create
-       POST /payments/upload-proof
 
    ========================================================= */
 
@@ -114,19 +98,6 @@ function getAPIBaseURL() {
 
 /* =========================================================
    GO TO DISCOVER MUSIC
-   =========================================================
-
-   IMPORTANT:
-
-   We DO NOT send listeners to:
-
-       index.html#songs
-
-   because your index page may contain artist registration
-   or artist onboarding.
-
-   Instead, we keep the listener inside listener.html.
-
    ========================================================= */
 
 function goToDiscoverMusic() {
@@ -146,10 +117,6 @@ function goToDiscoverMusic() {
 
 /* =========================================================
    GO TO MARKETPLACE
-   =========================================================
-
-   Kept for compatibility with older HTML.
-
    ========================================================= */
 
 function goToMarketplace() {
@@ -160,7 +127,7 @@ function goToMarketplace() {
    LOAD LISTENER LIBRARY
    =========================================================
 
-   Library contains PURCHASED songs only.
+   Library contains purchased songs only.
 
    ========================================================= */
 
@@ -186,17 +153,9 @@ async function loadListenerLibrary() {
   }
 
   try {
-    /* =================================================
-           CHECK API
-           ================================================= */
-
     if (typeof KOLO_API === "undefined" || typeof KOLO_API.get !== "function") {
       throw new Error("KOLO API is not available.");
     }
-
-    /* =================================================
-           REQUEST LIBRARY
-           ================================================= */
 
     const response = await KOLO_API.get(`/stream/library/${user.id}`);
 
@@ -204,17 +163,9 @@ async function loadListenerLibrary() {
 
     console.log("LISTENER LIBRARY:", songs);
 
-    /* =================================================
-           PURCHASED COUNT
-           ================================================= */
-
     if (purchasedCount) {
       purchasedCount.textContent = songs.length;
     }
-
-    /* =================================================
-           AVAILABLE SCREAMS
-           ================================================= */
 
     const availableSongs = songs.filter((song) => song.used !== true);
 
@@ -223,8 +174,8 @@ async function loadListenerLibrary() {
     }
 
     /* =================================================
-           EMPTY LIBRARY
-           ================================================= */
+       EMPTY LIBRARY
+       ================================================= */
 
     if (songs.length === 0) {
       if (libraryMessage) {
@@ -233,33 +184,27 @@ async function loadListenerLibrary() {
 
       if (container) {
         container.innerHTML = `
+          <div class="music-card">
+            <div class="music-info">
 
-                    <div class="music-card">
+              <h3>Your library is empty</h3>
 
-                        <div class="music-info">
+              <p>
+                Purchase a KOLO SCREAM
+                to unlock a song.
+              </p>
 
-                            <h3>
-                                Your library is empty
-                            </h3>
+              <button
+                type="button"
+                class="primary-btn"
+                id="discoverMusicButton"
+              >
+                Discover Music
+              </button>
 
-                            <p>
-                                Purchase a KOLO SCREAM
-                                to unlock a song.
-                            </p>
-
-                            <button
-                                type="button"
-                                class="primary-btn"
-                                id="discoverMusicButton"
-                            >
-                                Discover Music
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                `;
+            </div>
+          </div>
+        `;
 
         const discoverButton = document.getElementById("discoverMusicButton");
 
@@ -271,25 +216,17 @@ async function loadListenerLibrary() {
       return;
     }
 
-    /* =================================================
-           LIBRARY MESSAGE
-           ================================================= */
-
     if (libraryMessage) {
       libraryMessage.textContent = `${songs.length} song(s) in your library.`;
     }
-
-    /* =================================================
-           CLEAR OLD CONTENT
-           ================================================= */
 
     if (container) {
       container.innerHTML = "";
     }
 
     /* =================================================
-           CREATE LIBRARY SONG CARDS
-           ================================================= */
+       CREATE LIBRARY SONG CARDS
+       ================================================= */
 
     songs.forEach((song) => {
       if (!container) {
@@ -300,9 +237,7 @@ async function loadListenerLibrary() {
 
       card.className = "music-card";
 
-      /* =================================================
-               COVER
-               ================================================= */
+      /* COVER */
 
       const cover = document.createElement("img");
 
@@ -312,41 +247,31 @@ async function loadListenerLibrary() {
 
       cover.loading = "lazy";
 
-      /* =================================================
-               INFO
-               ================================================= */
+      /* INFO */
 
       const info = document.createElement("div");
 
       info.className = "music-info";
 
-      /* =================================================
-               TITLE
-               ================================================= */
+      /* TITLE */
 
       const title = document.createElement("h3");
 
       title.textContent = song.title || "Untitled";
 
-      /* =================================================
-               ARTIST
-               ================================================= */
+      /* ARTIST */
 
       const artist = document.createElement("p");
 
       artist.textContent = song.artist_name || "Unknown Artist";
 
-      /* =================================================
-               STATUS
-               ================================================= */
+      /* STATUS */
 
       const status = document.createElement("p");
 
       status.className = "song-status";
 
-      /* =================================================
-               PLAY BUTTON
-               ================================================= */
+      /* PLAY BUTTON */
 
       const playButton = document.createElement("button");
 
@@ -355,11 +280,11 @@ async function loadListenerLibrary() {
       playButton.className = "play-song-btn";
 
       /* =================================================
-               USED ACCESS
-               ================================================= */
+         USED ACCESS
+         ================================================= */
 
       if (song.used === true) {
-        status.textContent = "✓ Already played";
+        status.textContent = "Already played";
 
         playButton.textContent = "Already Played";
 
@@ -367,34 +292,20 @@ async function loadListenerLibrary() {
 
         playButton.classList.add("disabled");
       } else {
+        /* =================================================
+           AVAILABLE PURCHASED ACCESS
+           ================================================= */
 
-      /* =================================================
-               AVAILABLE PURCHASED ACCESS
-               ================================================= */
-        status.textContent = "🔥 Scream available";
+        status.textContent = "Scream available";
 
-        playButton.textContent = "🎵 Listen Now";
-
-        /*
-                    IMPORTANT:
-
-                    This song is ALREADY PURCHASED.
-
-                    DO NOT call prepareSong().
-
-                    DO NOT open payment modal.
-
-                    Go directly to protected playback.
-                */
+        playButton.textContent = "Listen Now";
 
         playButton.addEventListener("click", () => {
           playPurchasedSong(song);
         });
       }
 
-      /* =================================================
-               BUILD CARD
-               ================================================= */
+      /* BUILD CARD */
 
       info.appendChild(title);
       info.appendChild(artist);
@@ -412,31 +323,292 @@ async function loadListenerLibrary() {
     if (libraryMessage) {
       libraryMessage.textContent = "Unable to load your music.";
     }
+
+    if (container) {
+      container.innerHTML = `
+        <div class="music-card">
+          <div class="music-info">
+
+            <h3>
+              Music could not be loaded
+            </h3>
+
+            <p>
+              Please refresh the page
+              and try again.
+            </p>
+
+          </div>
+        </div>
+      `;
+    }
   }
 }
 
 /* =========================================================
-   PREPARE SCREAM PAYMENT
+   PLAY PURCHASED SONG
+   ========================================================= */
+
+async function playPurchasedSong(song) {
+  const user = checkListenerLogin();
+
+  if (!user) {
+    alert("Please login first.");
+    return;
+  }
+
+  if (!song || !song.song_id) {
+    alert("Song information is missing.");
+    return;
+  }
+
+  const audioPlayer = document.getElementById("audioPlayer");
+
+  if (!audioPlayer) {
+    alert("Audio player not found.");
+    return;
+  }
+
+  const playerTitle = document.getElementById("playerTitle");
+
+  const playerArtist = document.getElementById("playerArtist");
+
+  try {
+    const baseURL = getAPIBaseURL();
+
+    const streamURL = `${baseURL}/api/stream/${user.id}/${song.song_id}`;
+
+    console.log("PROTECTED STREAM:", streamURL);
+
+    audioPlayer.src = streamURL;
+
+    if (playerTitle) {
+      playerTitle.textContent = song.title || "KOLO MUSIC";
+    }
+
+    if (playerArtist) {
+      playerArtist.textContent = song.artist_name || "Unknown Artist";
+    }
+
+    await audioPlayer.play();
+
+    if (playerArtist) {
+      playerArtist.textContent = `${song.artist_name || "Artist"} | KOLO SCREAM`;
+    }
+
+    setTimeout(() => {
+      loadListenerLibrary();
+    }, 500);
+  } catch (error) {
+    console.error("Protected stream error:", error);
+
+    if (error && error.name === "NotAllowedError") {
+      alert("Click the play button again to start the song.");
+
+      return;
+    }
+
+    alert(
+      "Unable to play this song. " +
+        "Your listening access may already be used " +
+        "or the payment may not have been approved yet.",
+    );
+  }
+}
+
+/* =========================================================
+   LOAD DISCOVER MUSIC
    =========================================================
 
-   THIS FUNCTION IS ONLY FOR DISCOVER MUSIC.
+   Discover contains all approved songs.
 
-   It opens the payment modal.
+   Clicking Scream & Listen opens
+   the payment modal.
 
    ========================================================= */
 
-function prepareSong(song) {
-  if (!song) {
-    alert("Song information is missing.");
+async function loadDiscoverMusic() {
+  const container = document.getElementById("discoverMusicContainer");
+
+  const message = document.getElementById("discoverMusicMessage");
+
+  if (!container) {
+    console.error("Discover music container not found.");
 
     return;
   }
 
-  const user = checkListenerLogin();
+  if (message) {
+    message.textContent = "Loading KOLO MUSIC...";
+  }
 
-  if (!user) {
-    window.location.href = "login.html";
+  try {
+    if (typeof KOLO_API === "undefined" || typeof KOLO_API.get !== "function") {
+      throw new Error("KOLO API is not available.");
+    }
 
+    const response = await KOLO_API.get("/songs/discover");
+
+    const songs = Array.isArray(response?.songs) ? response.songs : [];
+
+    console.log("DISCOVER MUSIC:", songs);
+
+    /* =================================================
+       EMPTY DISCOVER
+       ================================================= */
+
+    if (songs.length === 0) {
+      container.innerHTML = `
+        <div class="music-card">
+          <div class="music-info">
+
+            <h3>
+              No music available yet
+            </h3>
+
+            <p>
+              Approved KOLO MUSIC songs
+              will appear here.
+            </p>
+
+          </div>
+        </div>
+      `;
+
+      if (message) {
+        message.textContent = "No approved music available.";
+      }
+
+      return;
+    }
+
+    container.innerHTML = "";
+
+    /* =================================================
+       DISPLAY SONGS
+       ================================================= */
+
+    songs.forEach((song) => {
+      const card = document.createElement("div");
+
+      card.className = "music-card discover-song-card";
+
+      /* COVER */
+
+      const cover = document.createElement("img");
+
+      cover.className = "discover-song-cover";
+
+      cover.src = song.cover_image || "";
+
+      cover.alt = song.title || "KOLO MUSIC Song";
+
+      cover.loading = "lazy";
+
+      /* INFO */
+
+      const info = document.createElement("div");
+
+      info.className = "music-info";
+
+      /* TITLE */
+
+      const title = document.createElement("h3");
+
+      title.textContent = song.title || "Untitled";
+
+      /* ARTIST */
+
+      const artist = document.createElement("p");
+
+      artist.textContent = song.artist_name || "Unknown Artist";
+
+      /* DESCRIPTION */
+
+      const description = document.createElement("p");
+
+      description.className = "song-description";
+
+      description.textContent = song.description || "KOLO MUSIC";
+
+      /* PRICE */
+
+      const status = document.createElement("p");
+
+      status.className = "song-status";
+
+      status.textContent = `${SCREAM_PRICE} LD | KOLO SCREAM`;
+
+      /* LISTEN BUTTON */
+
+      const listenButton = document.createElement("button");
+
+      listenButton.type = "button";
+
+      listenButton.className = "play-song-btn";
+
+      listenButton.textContent = "Scream & Listen";
+
+      listenButton.addEventListener("click", () => {
+        prepareSong({
+          song_id: song.song_id,
+          title: song.title,
+          artist_name: song.artist_name,
+          cover_image: song.cover_image,
+          description: song.description,
+        });
+      });
+
+      /* BUILD CARD */
+
+      info.appendChild(title);
+      info.appendChild(artist);
+      info.appendChild(description);
+      info.appendChild(status);
+      info.appendChild(listenButton);
+
+      card.appendChild(cover);
+      card.appendChild(info);
+
+      container.appendChild(card);
+    });
+
+    if (message) {
+      message.textContent = `${songs.length} approved song(s) available.`;
+    }
+  } catch (error) {
+    console.error("Discover music error:", error);
+
+    if (message) {
+      message.textContent = "Unable to load KOLO MUSIC.";
+    }
+
+    container.innerHTML = `
+      <div class="music-card">
+        <div class="music-info">
+
+          <h3>
+            Music could not be loaded
+          </h3>
+
+          <p>
+            Please refresh the page
+            and try again.
+          </p>
+
+        </div>
+      </div>
+    `;
+  }
+}
+
+/* =========================================================
+   PREPARE SCREAM SONG
+   ========================================================= */
+
+function prepareSong(song) {
+  if (!song || !song.song_id) {
+    alert("Song information is missing.");
     return;
   }
 
@@ -450,6 +622,10 @@ function prepareSong(song) {
 
   const artist = document.getElementById("paymentArtistName");
 
+  const senderName = document.getElementById("senderName");
+
+  const senderNumber = document.getElementById("senderNumber");
+
   const paymentMethod = document.getElementById("paymentMethod");
 
   const paymentProof = document.getElementById("paymentProof");
@@ -462,6 +638,14 @@ function prepareSong(song) {
 
   if (artist) {
     artist.textContent = song.artist_name || "Unknown Artist";
+  }
+
+  if (senderName) {
+    senderName.value = "";
+  }
+
+  if (senderNumber) {
+    senderNumber.value = "";
   }
 
   if (paymentMethod) {
@@ -520,6 +704,10 @@ async function createScreamPayment() {
     return;
   }
 
+  const senderName = document.getElementById("senderName");
+
+  const senderNumber = document.getElementById("senderNumber");
+
   const paymentMethod = document.getElementById("paymentMethod");
 
   const paymentProof = document.getElementById("paymentProof");
@@ -528,15 +716,58 @@ async function createScreamPayment() {
 
   const submitButton = document.getElementById("submitScreamPayment");
 
-  if (!paymentMethod || !paymentProof || !message || !submitButton) {
+  if (
+    !senderName ||
+    !senderNumber ||
+    !paymentMethod ||
+    !paymentProof ||
+    !message ||
+    !submitButton
+  ) {
     console.error("Scream payment form is incomplete.");
 
     return;
   }
 
   /* =================================================
-       PAYMENT METHOD
-       ================================================= */
+     SENDER NAME
+     ================================================= */
+
+  const senderNameValue = senderName.value.trim();
+
+  if (!senderNameValue) {
+    message.textContent = "Please enter the name used for the payment.";
+
+    return;
+  }
+
+  if (senderNameValue.length < 2) {
+    message.textContent = "Please enter a valid sender name.";
+
+    return;
+  }
+
+  /* =================================================
+     MOBILE MONEY NUMBER
+     ================================================= */
+
+  const senderNumberValue = senderNumber.value.trim();
+
+  if (!senderNumberValue) {
+    message.textContent = "Please enter your Mobile Money number.";
+
+    return;
+  }
+
+  if (senderNumberValue.length < 7) {
+    message.textContent = "Please enter a valid Mobile Money number.";
+
+    return;
+  }
+
+  /* =================================================
+     PAYMENT METHOD
+     ================================================= */
 
   if (!paymentMethod.value) {
     message.textContent = "Please select a payment method.";
@@ -545,8 +776,8 @@ async function createScreamPayment() {
   }
 
   /* =================================================
-       PAYMENT PROOF
-       ================================================= */
+     PAYMENT PROOF
+     ================================================= */
 
   if (!paymentProof.files || paymentProof.files.length === 0) {
     message.textContent = "Please upload your payment proof.";
@@ -557,8 +788,8 @@ async function createScreamPayment() {
   const proofFile = paymentProof.files[0];
 
   /* =================================================
-       FILE TYPE
-       ================================================= */
+     FILE TYPE
+     ================================================= */
 
   if (!proofFile.type.startsWith("image/")) {
     message.textContent = "Payment proof must be an image.";
@@ -567,8 +798,8 @@ async function createScreamPayment() {
   }
 
   /* =================================================
-       FILE SIZE
-       ================================================= */
+     FILE SIZE
+     ================================================= */
 
   const maxFileSize = 5 * 1024 * 1024;
 
@@ -579,8 +810,8 @@ async function createScreamPayment() {
   }
 
   /* =================================================
-       DISABLE BUTTON
-       ================================================= */
+     DISABLE BUTTON
+     ================================================= */
 
   submitButton.disabled = true;
 
@@ -588,8 +819,8 @@ async function createScreamPayment() {
 
   try {
     /* =================================================
-           CHECK API
-           ================================================= */
+       CHECK API
+       ================================================= */
 
     if (
       typeof KOLO_API === "undefined" ||
@@ -599,8 +830,8 @@ async function createScreamPayment() {
     }
 
     /* =================================================
-           STEP 1 — CREATE PAYMENT
-           ================================================= */
+       STEP 1 - CREATE PAYMENT
+       ================================================= */
 
     message.textContent = "Creating payment request...";
 
@@ -612,6 +843,10 @@ async function createScreamPayment() {
       amount: SCREAM_PRICE,
 
       payment_method: paymentMethod.value,
+
+      sender_name: senderNameValue,
+
+      sender_number: senderNumberValue,
     });
 
     if (!paymentResponse || !paymentResponse.payment) {
@@ -631,8 +866,8 @@ async function createScreamPayment() {
     console.log("PAYMENT CREATED:", payment);
 
     /* =================================================
-           STEP 2 — UPLOAD PROOF
-           ================================================= */
+       STEP 2 - UPLOAD PAYMENT PROOF
+       ================================================= */
 
     message.textContent = "Uploading payment proof...";
 
@@ -644,459 +879,57 @@ async function createScreamPayment() {
 
     const baseURL = getAPIBaseURL();
 
-    const uploadResponse = await fetch(`${baseURL}/payments/upload-proof`, {
+    const uploadResponse = await fetch(`${baseURL}/api/payments/upload-proof`, {
       method: "POST",
       body: formData,
     });
 
-    if (!uploadResponse.ok) {
-      let errorMessage = "Payment proof upload failed.";
+    let uploadData = null;
 
-      try {
-        const errorData = await uploadResponse.json();
-
-        if (errorData.detail) {
-          errorMessage = errorData.detail;
-        }
-      } catch (jsonError) {
-        console.error("Payment error response:", jsonError);
-      }
-
-      throw new Error(errorMessage);
+    try {
+      uploadData = await uploadResponse.json();
+    } catch (error) {
+      uploadData = null;
     }
 
+    if (!uploadResponse.ok) {
+      throw new Error(uploadData?.detail || "Payment proof upload failed.");
+    }
+
+    console.log("PAYMENT PROOF UPLOADED:", uploadData);
+
     /* =================================================
-           SUCCESS
-           ================================================= */
+       SUCCESS
+       ================================================= */
 
     message.textContent =
-      "Payment submitted successfully. " +
-      "Your Scream is waiting for admin approval.";
+      "Payment submitted successfully. Please wait for admin approval.";
 
-    message.style.color = "#FFD166";
+    message.style.color = "green";
 
-    submitButton.textContent = "Payment Submitted";
+    submitButton.textContent = "Submitted";
 
-    /*
-            DO NOT immediately add the song
-            to the library.
-
-            The admin must approve it first.
-
-            The backend approval function creates
-            listening_access.
-        */
+    /* =================================================
+       CLOSE MODAL AFTER DELAY
+       ================================================= */
 
     setTimeout(() => {
       closeScreamModal();
 
-      loadListenerLibrary();
-    }, 2500);
+      submitButton.disabled = false;
+
+      submitButton.textContent = "Submit Payment";
+    }, 2000);
   } catch (error) {
     console.error("Scream payment error:", error);
 
-    message.textContent = error.message || "Payment failed. Please try again.";
+    message.textContent = error?.message || "Unable to submit payment.";
 
-    message.style.color = "#ff6b6b";
+    message.style.color = "red";
 
     submitButton.disabled = false;
 
-    submitButton.textContent = "Submit Scream Payment";
-  }
-}
-
-/* =========================================================
-   PLAY PURCHASED SONG
-   =========================================================
-
-   IMPORTANT:
-
-   This function is ONLY for songs already purchased.
-
-   It does NOT:
-
-   - create payment
-   - open payment modal
-   - upload proof
-
-   It requests:
-
-       /stream/{user_id}/{song_id}
-
-   Backend checks:
-
-       listening_access
-       used = false
-       approved song
-
-   ========================================================= */
-
-async function playPurchasedSong(song) {
-  if (!song) {
-    alert("Song information is missing.");
-
-    return;
-  }
-
-  const user = checkListenerLogin();
-
-  if (!user) {
-    window.location.href = "login.html";
-
-    return;
-  }
-
-  /* =================================================
-       PREVENT USED ACCESS
-       ================================================= */
-
-  if (song.used === true) {
-    alert("This Scream has already been used.");
-
-    return;
-  }
-
-  const playerTitle = document.getElementById("playerTitle");
-
-  const playerArtist = document.getElementById("playerArtist");
-
-  const playerCover = document.getElementById("playerCover");
-
-  const audioPlayer = document.getElementById("audioPlayer");
-
-  if (!audioPlayer) {
-    alert("Audio player was not found.");
-
-    return;
-  }
-
-  /* =================================================
-       UPDATE PLAYER UI
-       ================================================= */
-
-  if (playerTitle) {
-    playerTitle.textContent = song.title || "Song";
-  }
-
-  if (playerArtist) {
-    playerArtist.textContent = song.artist_name || "Artist";
-  }
-
-  if (playerCover) {
-    playerCover.src = song.cover_image || "";
-  }
-
-  try {
-    /* =================================================
-           PROTECTED STREAM URL
-           ================================================= */
-
-    const baseURL = getAPIBaseURL();
-
-    const streamURL = `${baseURL}/stream/${user.id}/${song.song_id}`;
-
-    console.log("STARTING PROTECTED STREAM:", streamURL);
-
-    /* =================================================
-           RESET PLAYER
-           ================================================= */
-
-    audioPlayer.pause();
-
-    audioPlayer.removeAttribute("src");
-
-    audioPlayer.load();
-
-    /* =================================================
-           SET PROTECTED STREAM
-           ================================================= */
-
-    audioPlayer.src = streamURL;
-
-    audioPlayer.load();
-
-    /* =================================================
-           START PLAYBACK
-           ================================================= */
-
-    await audioPlayer.play();
-
-    if (playerArtist) {
-      playerArtist.textContent = `${song.artist_name || "Artist"} • KOLO SCREAM`;
-    }
-
-    /*
-            IMPORTANT:
-
-            The backend should mark the listening
-            access as USED only when the stream
-            request is successfully authorized.
-
-            Refresh the library after playback starts.
-        */
-
-    setTimeout(() => {
-      loadListenerLibrary();
-    }, 500);
-  } catch (error) {
-    console.error("Protected stream error:", error);
-
-    if (error && error.name === "NotAllowedError") {
-      alert("Click the play button again to start the song.");
-
-      return;
-    }
-
-    alert(
-      "Unable to play this song. " +
-        "Your listening access may already be used " +
-        "or the payment may not have been approved yet.",
-    );
-  }
-}
-
-/* =========================================================
-   LOAD DISCOVER MUSIC
-   =========================================================
-
-   Discover contains ALL approved songs.
-
-   Clicking:
-
-       Scream & Listen
-
-   opens the payment modal.
-
-   ========================================================= */
-
-async function loadDiscoverMusic() {
-  const container = document.getElementById("discoverMusicContainer");
-
-  const message = document.getElementById("discoverMusicMessage");
-
-  if (!container) {
-    console.error("Discover music container not found.");
-
-    return;
-  }
-
-  if (message) {
-    message.textContent = "Loading KOLO MUSIC...";
-  }
-
-  try {
-    /* =================================================
-           CHECK API
-           ================================================= */
-
-    if (typeof KOLO_API === "undefined" || typeof KOLO_API.get !== "function") {
-      throw new Error("KOLO API is not available.");
-    }
-
-    /* =================================================
-           GET APPROVED SONGS
-           ================================================= */
-
-    const response = await KOLO_API.get("/songs/discover");
-
-    const songs = Array.isArray(response?.songs) ? response.songs : [];
-
-    console.log("DISCOVER MUSIC:", songs);
-
-    /* =================================================
-           EMPTY
-           ================================================= */
-
-    if (songs.length === 0) {
-      container.innerHTML = `
-
-                <div class="music-card">
-
-                    <div class="music-info">
-
-                        <h3>
-                            No music available yet
-                        </h3>
-
-                        <p>
-                            Approved KOLO MUSIC songs
-                            will appear here.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            `;
-
-      if (message) {
-        message.textContent = "No approved music available.";
-      }
-
-      return;
-    }
-
-    /* =================================================
-           CLEAR
-           ================================================= */
-
-    container.innerHTML = "";
-
-    /* =================================================
-           DISPLAY SONGS
-           ================================================= */
-
-    songs.forEach((song) => {
-      const card = document.createElement("div");
-
-      card.className = "music-card discover-song-card";
-
-      /* =================================================
-               COVER
-               ================================================= */
-
-      const cover = document.createElement("img");
-
-      cover.className = "discover-song-cover";
-
-      cover.src = song.cover_image || "";
-
-      cover.alt = song.title || "KOLO MUSIC Song";
-
-      cover.loading = "lazy";
-
-      /* =================================================
-               INFO
-               ================================================= */
-
-      const info = document.createElement("div");
-
-      info.className = "music-info";
-
-      /* =================================================
-               TITLE
-               ================================================= */
-
-      const title = document.createElement("h3");
-
-      title.textContent = song.title || "Untitled";
-
-      /* =================================================
-               ARTIST
-               ================================================= */
-
-      const artist = document.createElement("p");
-
-      artist.textContent = song.artist_name || "Unknown Artist";
-
-      /* =================================================
-               DESCRIPTION
-               ================================================= */
-
-      const description = document.createElement("p");
-
-      description.className = "song-description";
-
-      description.textContent = song.description || "KOLO MUSIC";
-
-      /* =================================================
-               PRICE
-               ================================================= */
-
-      const status = document.createElement("p");
-
-      status.className = "song-status";
-
-      status.textContent = `🔥 ${SCREAM_PRICE} LD • KOLO SCREAM`;
-
-      /* =================================================
-               LISTEN BUTTON
-               ================================================= */
-
-      const listenButton = document.createElement("button");
-
-      listenButton.type = "button";
-
-      listenButton.className = "play-song-btn";
-
-      listenButton.textContent = "🔥 Scream & Listen";
-
-      /*
-                IMPORTANT:
-
-                This is DISCOVER music.
-
-                The listener has not purchased
-                this song through this screen.
-
-                Therefore open payment modal.
-            */
-
-      listenButton.addEventListener("click", () => {
-        prepareSong({
-          song_id: song.song_id,
-
-          title: song.title,
-
-          artist_name: song.artist_name,
-
-          cover_image: song.cover_image,
-
-          description: song.description,
-        });
-      });
-
-      /* =================================================
-               BUILD CARD
-               ================================================= */
-
-      info.appendChild(title);
-
-      info.appendChild(artist);
-
-      info.appendChild(description);
-
-      info.appendChild(status);
-
-      info.appendChild(listenButton);
-
-      card.appendChild(cover);
-
-      card.appendChild(info);
-
-      container.appendChild(card);
-    });
-
-    if (message) {
-      message.textContent = `${songs.length} approved song(s) available.`;
-    }
-  } catch (error) {
-    console.error("Discover music error:", error);
-
-    if (message) {
-      message.textContent = "Unable to load KOLO MUSIC.";
-    }
-
-    container.innerHTML = `
-
-            <div class="music-card">
-
-                <div class="music-info">
-
-                    <h3>
-                        Music could not be loaded
-                    </h3>
-
-                    <p>
-                        Please refresh the page
-                        and try again.
-                    </p>
-
-                </div>
-
-            </div>
-
-        `;
+    submitButton.textContent = "Submit Payment";
   }
 }
 
@@ -1125,25 +958,19 @@ function setupScreamModal() {
 
   const submitButton = document.getElementById("submitScreamPayment");
 
-  /* =================================================
-       CLOSE BUTTON
-       ================================================= */
+  /* CLOSE BUTTON */
 
   if (closeButton) {
     closeButton.addEventListener("click", closeScreamModal);
   }
 
-  /* =================================================
-       SUBMIT PAYMENT
-       ================================================= */
+  /* SUBMIT PAYMENT */
 
   if (submitButton) {
     submitButton.addEventListener("click", createScreamPayment);
   }
 
-  /* =================================================
-       CLICK OUTSIDE
-       ================================================= */
+  /* CLICK OUTSIDE */
 
   if (modal) {
     modal.addEventListener("click", (event) => {
@@ -1153,9 +980,7 @@ function setupScreamModal() {
     });
   }
 
-  /* =================================================
-       ESCAPE KEY
-       ================================================= */
+  /* ESCAPE KEY */
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
@@ -1173,17 +998,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const user = checkListenerLogin();
 
-  /* =================================================
-           WELCOME
-           ================================================= */
+  /* WELCOME */
 
   if (user) {
     updateWelcomeMessage(user);
   }
 
-  /* =================================================
-           LOGOUT
-           ================================================= */
+  /* LOGOUT */
 
   const logoutButton = document.getElementById("logoutButton");
 
@@ -1191,15 +1012,11 @@ document.addEventListener("DOMContentLoaded", () => {
     logoutButton.addEventListener("click", listenerLogout);
   }
 
-  /* =================================================
-           PAYMENT MODAL
-           ================================================= */
+  /* PAYMENT MODAL */
 
   setupScreamModal();
 
-  /* =================================================
-           LOAD LISTENER DATA
-           ================================================= */
+  /* LOAD LISTENER DATA */
 
   if (user) {
     loadListenerLibrary();

@@ -1,42 +1,12 @@
-/* ==========================================
+﻿/* ==========================================
    KOLO MUSIC API CONNECTION
 ========================================== */
 
-/*
-   This file creates the global KOLO_API
-   object used by:
-
-   - marketplace.js
-   - auth.js
-   - listener.js
-   - admin.js
-   - app.js
-   - artist.js
-   - other frontend files
-
-   IMPORTANT:
-   Never put Supabase service-role keys
-   or other private secrets in this file.
-*/
-
-/* ==========================================
-   KOLO BACKEND URL
-========================================== */
-
-/*
-   LOCAL DEVELOPMENT
-
-   Keep this while testing on your computer.
-
-   Later, when the FastAPI backend is online,
-   we will replace this with the public backend URL.
-
-   Example:
-
-   const API_URL = "https://your-kolo-backend.example.com";
-*/
-
-const API_URL = "/api";
+const API_URL =
+  window.location.hostname === "127.0.0.1" ||
+  window.location.hostname === "localhost"
+    ? "http://127.0.0.1:8000/api"
+    : "/api";
 
 /* ==========================================
    GET CURRENT KOLO USER
@@ -70,12 +40,6 @@ function getAuthHeaders() {
   const headers = {
     "Content-Type": "application/json",
   };
-
-  /*
-       Our FastAPI security system expects:
-
-       user-id: USER_ID
-    */
 
   if (user && user.id) {
     headers["user-id"] = user.id;
@@ -120,7 +84,6 @@ async function apiGet(endpoint) {
     return await response.json();
   } catch (error) {
     console.error("API GET ERROR:", error);
-
     throw error;
   }
 }
@@ -162,7 +125,6 @@ async function apiPost(endpoint, data = {}) {
     return await response.json();
   } catch (error) {
     console.error("API POST ERROR:", error);
-
     throw error;
   }
 }
@@ -173,11 +135,8 @@ async function apiPost(endpoint, data = {}) {
 
 window.KOLO_API = {
   get: apiGet,
-
   post: apiPost,
-
   url: API_URL,
-
   baseURL: API_URL,
 };
 

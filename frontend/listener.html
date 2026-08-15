@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 
 <html lang="en">
   <head>
@@ -17,8 +17,7 @@
   ========================================== -->
 
     <header class="navbar">
-      ```
-      <div class="logo">🎵 KOLO MUSIC</div>
+      <div class="logo">🔥 KOLO MUSIC</div>
 
       <nav class="nav-links">
         <!-- Stay inside listener dashboard -->
@@ -35,7 +34,6 @@
           Logout
         </button>
       </div>
-      ```
     </header>
 
     <!-- ==========================================
@@ -43,7 +41,6 @@
   ========================================== -->
 
     <main id="top" class="listener-dashboard">
-      ```
       <!-- ========================================
      WELCOME
 ======================================== -->
@@ -217,7 +214,6 @@
           </div>
         </div>
       </section>
-      ```
     </main>
 
     <!-- ==========================================
@@ -225,12 +221,11 @@
   ========================================== -->
 
     <div id="screamModal" class="scream-modal" style="display: none">
-      ```
       <div class="scream-modal-content">
         <!-- CLOSE -->
 
         <button type="button" id="closeScreamModal" class="close-modal">
-          ×
+          Ã—
         </button>
 
         <p class="dashboard-label">KOLO SCREAM</p>
@@ -245,6 +240,29 @@
        PAYMENT METHOD
   ====================================== -->
 
+        <!-- ======================================
+     SENDER INFORMATION
+====================================== -->
+
+        <label for="senderName"> Sender Name </label>
+
+        <input
+          type="text"
+          id="senderName"
+          placeholder="Enter the name used for the payment"
+          maxlength="100"
+          autocomplete="name"
+        />
+
+        <label for="senderNumber"> Mobile Money Number </label>
+
+        <input
+          type="tel"
+          id="senderNumber"
+          placeholder="e.g. 0881234567"
+          maxlength="20"
+          autocomplete="tel"
+        />
         <label for="paymentMethod"> Payment Method </label>
 
         <select id="paymentMethod">
@@ -273,7 +291,6 @@
 
         <p id="paymentMessage" class="payment-message"></p>
       </div>
-      ```
     </div>
 
     <!-- ==========================================

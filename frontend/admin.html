@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -397,7 +397,213 @@
          ADMIN OPERATIONS
     ======================================= -->
 
-    <section class="admin-section admin-info-section">
+    
+<!-- ==========================================
+     PLATFORM SETTINGS
+=========================================== -->
+
+<section class="admin-section admin-settings-section">
+
+    <div class="admin-section-header">
+
+        <div>
+            <h2>Platform Settings</h2>
+
+            <p>
+                Control KOLO MUSIC pricing, registrations,
+                maintenance mode and homepage messaging.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="admin-settings-card">
+
+        <!-- PRICING -->
+
+        <div class="settings-group">
+
+            <h3>💰 Pricing & Revenue</h3>
+
+            <div class="settings-grid">
+
+                <div class="settings-field">
+                    <label for="settingScreamPrice">
+                        Scream Price (LD)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="settingScreamPrice"
+                        min="1"
+                        step="0.01"
+                    >
+                </div>
+
+                <div class="settings-field">
+                    <label for="settingPlatformFee">
+                        Platform Fee (%)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="settingPlatformFee"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                    >
+                </div>
+
+                <div class="settings-field">
+                    <label for="settingArtistPercent">
+                        Artist Share (%)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="settingArtistPercent"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                    >
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PLATFORM CONTROLS -->
+
+        <div class="settings-group">
+
+            <h3>⚙️ Platform Controls</h3>
+
+            <div class="settings-toggle-list">
+
+                <label class="settings-toggle">
+
+                    <input
+                        type="checkbox"
+                        id="settingListenerRegistration"
+                    >
+
+                    <span>
+                        Listener Registration
+                    </span>
+
+                </label>
+
+
+                <label class="settings-toggle">
+
+                    <input
+                        type="checkbox"
+                        id="settingArtistRegistration"
+                    >
+
+                    <span>
+                        Artist Registration
+                    </span>
+
+                </label>
+
+
+                <label class="settings-toggle">
+
+                    <input
+                        type="checkbox"
+                        id="settingMaintenanceMode"
+                    >
+
+                    <span>
+                        Maintenance Mode
+                    </span>
+
+                </label>
+
+            </div>
+
+        </div>
+
+
+        <!-- HOMEPAGE -->
+
+        <div class="settings-group">
+
+            <h3>🏠 Homepage Message</h3>
+
+            <div class="settings-grid settings-grid-single">
+
+                <div class="settings-field">
+
+                    <label for="settingHomepageTitle">
+                        Homepage Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="settingHomepageTitle"
+                        maxlength="150"
+                    >
+
+                </div>
+
+
+                <div class="settings-field">
+
+                    <label for="settingHomepageMessage">
+                        Homepage Message
+                    </label>
+
+                    <textarea
+                        id="settingHomepageMessage"
+                        rows="4"
+                        maxlength="500"
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="settings-actions">
+
+            <button
+                type="button"
+                id="loadSettingsButton"
+                class="admin-button"
+            >
+                Reload Settings
+            </button>
+
+            <button
+                type="button"
+                id="saveSettingsButton"
+                class="admin-button admin-button-primary"
+            >
+                Save Settings
+            </button>
+
+        </div>
+
+
+        <div
+            id="settingsStatus"
+            class="settings-status"
+            aria-live="polite"
+        ></div>
+
+    </div>
+
+</section>
+
+
+<section class="admin-section admin-info-section">
 
         <div class="admin-section-header">
 
@@ -512,3 +718,4 @@
 
 </body>
 </html>
+

@@ -1,4 +1,4 @@
-from fastapi import (
+﻿from fastapi import (
     APIRouter,
     HTTPException,
     UploadFile,
@@ -32,6 +32,8 @@ class PaymentRequest(BaseModel):
     song_id: str
     amount: int
     payment_method: str
+    sender_name: str
+    sender_number: str
 
 
 
@@ -69,6 +71,8 @@ def create_payment(payment: PaymentRequest):
                 "song_id": payment.song_id,
                 "amount": payment.amount,
                 "payment_method": payment.payment_method,
+                "sender_name": payment.sender_name,
+                "sender_number": payment.sender_number,
                 "status": "pending"
             }
         ).execute()
@@ -175,3 +179,6 @@ async def upload_payment_proof(
             status_code=400,
             detail=str(e)
         )
+
+
+

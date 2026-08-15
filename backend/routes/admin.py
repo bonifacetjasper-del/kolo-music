@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+﻿from fastapi import APIRouter, HTTPException, Depends
 
 from backend.database import supabase
 from backend.security import require_admin
@@ -13,38 +13,102 @@ router = APIRouter(
     tags=["Admin"]
 )
 
-
 # ==========================================
 # KOLO MUSIC FINANCIAL SETTINGS
 # ==========================================
 
-SCREAM_PRICE = 50
-
-PLATFORM_FEE_PERCENT = 30
-
-ARTIST_PERCENT = 70
-
-
-# ==========================================
-# HELPER
-# ==========================================
-
-def calculate_split(amount: int):
+def get_platform_settings():
     """
-    Split a KOLO SCREAM payment.
-
-    Platform = 30%
-    Artist   = 70%
+    Get the current KOLO MUSIC financial
+    settings from the platform_settings table.
     """
 
-    platform_fee = round(
-        amount * PLATFORM_FEE_PERCENT / 100
+    result = (
+        supabase
+        .table("platform_settings")
+        .select(
+            "scream_price, "
+            "platform_fee_percent, "
+            "artist_percent"
+        )
+        .limit(1)
+        .execute()
     )
 
-    artist_amount = amount - platform_fee
+    if not result.data:
+        raise Exception(
+            "KOLO MUSIC platform settings not found"
+        )
+
+    return result.data[0]
+
+
+# ==========================================
+# GET CURRENT SCREAM PRICE
+# ==========================================
+
+def get_scream_price():
+
+    settings = get_platform_settings()
+
+    price = float(
+        settings.get("scream_price") or 0
+    )
+
+    if price <= 0:
+        raise Exception(
+            "Invalid KOLO MUSIC scream price"
+        )
+
+    return price
+
+
+# ==========================================
+# CALCULATE PAYMENT SPLIT
+# ==========================================
+
+def calculate_split(amount: float):
+
+    settings = get_platform_settings()
+
+    platform_percent = float(
+        settings.get("platform_fee_percent") or 0
+    )
+
+    artist_percent = float(
+        settings.get("artist_percent") or 0
+    )
+
+    if not 0 <= platform_percent <= 100:
+        raise Exception(
+            "Invalid platform fee percentage"
+        )
+
+    if not 0 <= artist_percent <= 100:
+        raise Exception(
+            "Invalid artist percentage"
+        )
+
+    if round(
+        platform_percent + artist_percent,
+        2
+    ) != 100:
+        raise Exception(
+            "Platform fee and artist percentage "
+            "must equal 100%"
+        )
+
+    platform_fee = round(
+        amount * platform_percent / 100,
+        2
+    )
+
+    artist_amount = round(
+        amount * artist_percent / 100,
+        2
+    )
 
     return platform_fee, artist_amount
-
 
 # ==========================================
 # PENDING ARTISTS
@@ -1085,16 +1149,27 @@ def admin_analytics(
             float(payment.get("amount") or 0)
             for payment in approved_payment_rows
         )
+        settings = get_platform_settings()
+
+        platform_percent = float(
+            settings.get("platform_fee_percent") or 0
+        )
+
+        artist_percent = float(
+            settings.get("artist_percent") or 0
+        )
 
         platform_revenue = round(
             total_revenue
-            * PLATFORM_FEE_PERCENT
+            * platform_percent
             / 100,
             2
         )
 
         artist_revenue = round(
-            total_revenue - platform_revenue,
+            total_revenue
+            * artist_percent
+            / 100,
             2
         )
 
@@ -1407,3 +1482,4 @@ def get_all_withdrawals(
             status_code=500,
             detail="Unable to load withdrawals"
         )
+
