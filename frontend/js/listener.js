@@ -607,10 +607,33 @@ async function loadDiscoverMusic() {
    ========================================================= */
 
 function prepareSong(song) {
-  if (!song || !song.song_id) {
-    alert("Song information is missing.");
-    return;
-  }
+
+    /* ==========================================
+       LOGIN REQUIRED FOR KOLO SCREAM
+    ========================================== */
+
+    const user = getListenerUser();
+
+    if (!user) {
+
+      localStorage.setItem(
+        "koloReturnAfterLogin",
+        "listener.html"
+      );
+
+      window.location.href = "login.html";
+
+      return;
+    }
+
+    /* ==========================================
+       CHECK SONG
+    ========================================== */
+
+    if (!song || !song.song_id) {
+      alert("Song information is missing.");
+      return;
+    }
 
   selectedScreamSong = song;
 
@@ -1016,11 +1039,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setupScreamModal();
 
-  /* LOAD LISTENER DATA */
+  /* =========================================================
+   LOAD LISTENER DATA
+========================================================= */
 
-  if (user) {
-    loadListenerLibrary();
+/* Library requires login */
+if (user) {
+  loadListenerLibrary();
+}
 
-    loadDiscoverMusic();
-  }
+/* Discover is public */
+loadDiscoverMusic();
 });
+
+
+
+

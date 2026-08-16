@@ -1,4 +1,4 @@
-/* ==========================================
+﻿/* ==========================================
    KOLO MUSIC GLOBAL STYLE SYSTEM
 ========================================== */
 
@@ -166,7 +166,7 @@ button {
 
   background:
     linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.85)),
-    url("../assets/images/music-bg.jpg");
+    url("../asserts/images/music-bg.jpg");
 
   background-size: cover;
 
@@ -655,7 +655,7 @@ button {
 }
 
 /* ==========================================
-   KOLO MUSIC — LISTENER DASHBOARD
+   KOLO MUSIC â€” LISTENER DASHBOARD
 ========================================== */
 
 /* ==========================================
@@ -1769,3 +1769,678 @@ ADMIN RESPONSIVE
   }
 }
 
+
+
+/* =========================================================
+   KOLO MUSIC — HOMEPAGE V1
+   Official Public Landing Page
+   ========================================================= */
+
+/* =========================================================
+   HOMEPAGE GLOBAL
+   ========================================================= */
+
+main {
+  width: 100%;
+}
+
+.hero,
+.features-section,
+.cta-section,
+.about-section,
+.final-cta {
+  width: 100%;
+}
+
+.hero {
+  position: relative;
+  min-height: 88vh;
+  padding: 110px 8%;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  right: -180px;
+  bottom: -220px;
+  background: rgba(193, 18, 31, 0.18);
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.dashboard-label {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.hero h1 {
+  max-width: 900px;
+  margin: 0 auto 25px;
+  font-size: clamp(44px, 7vw, 82px);
+  line-height: 1.02;
+  letter-spacing: -2px;
+  font-weight: 900;
+}
+
+.hero h1 span {
+  color: var(--primary);
+}
+
+.hero-description {
+  max-width: 680px;
+  margin: 0 auto 35px;
+  color: #c0c0c0;
+  font-size: clamp(16px, 2vw, 20px);
+  line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.hero-actions .primary-btn,
+.hero-actions .secondary-btn {
+  min-width: 190px;
+  text-align: center;
+  padding: 15px 28px;
+}
+
+.hero-login {
+  margin: 0 !important;
+  color: #888 !important;
+  font-size: 14px !important;
+}
+
+.hero-login a {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.hero-login a:hover {
+  text-decoration: underline;
+}
+
+
+/* =========================================================
+   BUTTON SYSTEM
+   ========================================================= */
+
+.primary-btn,
+.secondary-btn,
+.login-btn,
+.register-btn {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 30px rgba(193, 18, 31, 0.35);
+}
+
+.secondary-btn:hover {
+  transform: translateY(-3px) !important;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+
+/* =========================================================
+   HOMEPAGE SECTION SYSTEM
+   ========================================================= */
+
+.features-section,
+.about-section {
+  padding: 100px 8%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-heading {
+  margin-bottom: 50px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: clamp(32px, 4vw, 50px);
+  line-height: 1.1;
+  font-weight: 850;
+  letter-spacing: -1px;
+}
+
+.section-heading > div {
+  max-width: 700px;
+}
+
+
+/* =========================================================
+   FEATURE GRID
+   ========================================================= */
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.feature-card {
+  position: relative;
+  padding: 35px;
+  min-height: 300px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.015)
+    );
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+
+  display: flex;
+  flex-direction: column;
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(193, 18, 31, 0.55);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.feature-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 25px;
+
+  border-radius: 18px;
+
+  background: rgba(193, 18, 31, 0.15);
+
+  border: 1px solid rgba(193, 18, 31, 0.25);
+
+  font-size: 27px;
+}
+
+.feature-card h3 {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.feature-card p {
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 25px;
+}
+
+.feature-card a {
+  margin-top: auto;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.feature-card a:hover {
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   ARTIST CTA
+   ========================================================= */
+
+.cta-section {
+  margin: 30px auto;
+  max-width: 1240px;
+  padding: 90px 8%;
+
+  border-radius: 30px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(193, 18, 31, 0.95),
+      rgba(112, 0, 0, 0.92)
+    );
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  text-align: center;
+
+  overflow: hidden;
+  position: relative;
+}
+
+.cta-section::before {
+  content: "";
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  left: -180px;
+  top: -180px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+}
+
+.cta-content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.cta-content .dashboard-label {
+  color: #ffffff;
+}
+
+.cta-content h2 {
+  font-size: clamp(34px, 5vw, 58px);
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.cta-content p {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+
+/* =========================================================
+   ABOUT SECTION
+   ========================================================= */
+
+.about-section {
+  text-align: center;
+}
+
+.about-section .section-heading {
+  margin-bottom: 25px;
+}
+
+.about-section > p {
+  max-width: 780px;
+  margin: 0 auto;
+  color: #aaa;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+
+/* =========================================================
+   FINAL CTA
+   ========================================================= */
+
+.final-cta {
+  padding: 110px 8%;
+  text-align: center;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(193, 18, 31, 0.18),
+      transparent 55%
+    );
+}
+
+.final-cta h2 {
+  font-size: clamp(34px, 5vw, 58px);
+  line-height: 1.1;
+  margin-bottom: 15px;
+}
+
+.final-cta p {
+  color: var(--muted);
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+
+/* =========================================================
+   HOMEPAGE FOOTER
+   ========================================================= */
+
+.site-footer {
+  background: #050505;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  padding: 45px 8% 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 30px;
+  flex-wrap: wrap;
+
+  color: #888;
+}
+
+.site-footer strong {
+  display: block;
+  color: var(--accent);
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.site-footer p {
+  margin: 0;
+  color: #777;
+}
+
+.site-footer .footer-links {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 22px;
+}
+
+.site-footer .footer-links a {
+  color: #aaa;
+  transition: color 0.25s ease;
+}
+
+.site-footer .footer-links a:hover {
+  color: var(--accent);
+}
+
+
+/* =========================================================
+   HOMEPAGE NAVIGATION
+   ========================================================= */
+
+.navbar {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.logo {
+  white-space: nowrap;
+  transition: transform 0.25s ease;
+}
+
+.logo:hover {
+  transform: scale(1.03);
+}
+
+.nav-links a {
+  position: relative;
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -7px;
+
+  width: 0;
+  height: 2px;
+
+  background: var(--primary);
+
+  transition: width 0.25s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+
+/* =========================================================
+   HOMEPAGE MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .navbar {
+    padding: 18px 5%;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .features-section,
+  .about-section {
+    padding: 75px 5%;
+  }
+
+  .cta-section {
+    margin: 20px 5%;
+    padding: 70px 7%;
+  }
+
+  .hero {
+    min-height: 80vh;
+    padding: 90px 5%;
+  }
+
+  .site-footer {
+    padding: 40px 5% 25px;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .navbar {
+    gap: 16px;
+  }
+
+  .nav-links {
+    gap: 12px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .nav-buttons {
+    width: 100%;
+  }
+
+  .nav-buttons a {
+    flex: 1;
+    text-align: center;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 80px 5% 90px;
+  }
+
+  .hero h1 {
+    font-size: clamp(40px, 12vw, 55px);
+    letter-spacing: -1px;
+  }
+
+  .hero-description {
+    font-size: 16px;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .hero-actions a {
+    width: 100%;
+  }
+
+  .feature-card {
+    padding: 28px;
+    min-height: 270px;
+  }
+
+  .section-heading h2 {
+    font-size: 34px;
+  }
+
+  .cta-section {
+    border-radius: 22px;
+    margin: 10px 4%;
+  }
+
+  .cta-content h2 {
+    font-size: 36px;
+  }
+
+  .about-section > p {
+    font-size: 16px;
+  }
+
+  .final-cta {
+    padding: 80px 5%;
+  }
+
+  .final-cta h2 {
+    font-size: 36px;
+  }
+
+  .final-cta .primary-btn {
+    display: inline-block;
+    width: 100%;
+  }
+
+  .site-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-footer .footer-links {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+}
+
+
+/* =========================================================
+   KOLO NAVIGATION LOGO
+   ========================================================= */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  white-space: nowrap;
+}
+
+.logo-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+  background: #111;
+
+  box-shadow:
+    0 0 0 3px rgba(193, 18, 31, 0.12),
+    0 6px 20px rgba(0, 0, 0, 0.35);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.logo:hover .logo-image {
+  transform: scale(1.06);
+
+  box-shadow:
+    0 0 0 4px rgba(193, 18, 31, 0.18),
+    0 8px 25px rgba(193, 18, 31, 0.25);
+}
+
+.logo span {
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+@media (max-width: 600px) {
+
+  .logo-image {
+    width: 42px;
+    height: 42px;
+  }
+
+  .logo {
+    font-size: 19px;
+  }
+
+}
+
+/* ==========================================
+   KOLO MUSIC ROUND LOGO
+========================================== */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-image {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+
+  border: 2px solid rgba(255, 209, 102, 0.8);
+
+  box-shadow:
+    0 0 0 3px rgba(193, 18, 31, 0.25),
+    0 5px 18px rgba(0, 0, 0, 0.35);
+}
+
+.logo span {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+@media (max-width: 600px) {
+
+  .logo-image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .logo span {
+    font-size: 19px;
+  }
+
+}
