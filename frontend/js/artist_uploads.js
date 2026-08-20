@@ -1,4 +1,4 @@
-/* =========================================================
+﻿/* =========================================================
    KOLO MUSIC - ARTIST SONG UPLOAD SYSTEM
 
    File:
@@ -20,7 +20,7 @@
    CONFIGURATION
 ========================================================= */
 
-const ARTIST_UPLOAD_API = "http://127.0.0.1:8000";
+const ARTIST_UPLOAD_API = "http://127.0.0.1:8000/api";
 
 /* =========================================================
    GET LOGGED-IN USER
@@ -702,3 +702,4 @@ window.uploadSong = uploadSong;
 window.handleCoverPreview = handleCoverPreview;
 
 window.handleAudioSelection = handleAudioSelection;
+

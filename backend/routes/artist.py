@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Header
+﻿from fastapi import APIRouter, HTTPException, Header
 
 from pydantic import BaseModel
 
@@ -279,6 +279,10 @@ def artist_dashboard(
 
 class WithdrawalRequest(BaseModel):
     amount: int
+    payment_method: str
+    mobile_money_name: str
+    mobile_money_number: str
+
 
 # ==========================================
 # REQUEST WITHDRAWAL
@@ -323,6 +327,35 @@ def request_withdrawal(
             )
 
         # ==================================
+        # VALIDATE PAYMENT INFORMATION
+        # ==================================
+
+        payment_method = withdrawal.payment_method.strip()
+        mobile_money_name = withdrawal.mobile_money_name.strip()
+        mobile_money_number = withdrawal.mobile_money_number.strip()
+
+        if not payment_method:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Mobile Money provider is required"
+            )
+
+        if not mobile_money_name:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Mobile Money account name is required"
+            )
+
+        if not mobile_money_number:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Mobile Money number is required"
+            )
+
+        # ==================================
         # GET WALLET
         # ==================================
 
@@ -351,7 +384,7 @@ def request_withdrawal(
         # CHECK BALANCE
         # ==================================
 
-        if current_balance < amount:
+        if amount > current_balance:
 
             raise HTTPException(
                 status_code=400,
@@ -371,7 +404,10 @@ def request_withdrawal(
             .insert({
                 "user_id": user_id,
                 "amount": amount,
-                "status": "pending"
+                "status": "pending",
+                "payment_method": payment_method,
+                "mobile_money_name": mobile_money_name,
+                "mobile_money_number": mobile_money_number
             })
             .execute()
         )
@@ -426,7 +462,6 @@ def request_withdrawal(
             "wallet": {
                 "balance": new_balance
             }
-
         }
 
     except HTTPException:
@@ -443,6 +478,7 @@ def request_withdrawal(
             status_code=500,
             detail="Unable to process withdrawal request"
         )
+
 
 # ==========================================
 # GET ARTIST WITHDRAWALS
@@ -502,3 +538,4 @@ def get_artist_withdrawals(
             status_code=500,
             detail="Unable to load withdrawals"
         )
+

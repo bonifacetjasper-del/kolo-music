@@ -169,6 +169,7 @@ async function loadListenerLibrary() {
 
     const availableSongs = songs.filter((song) => song.used !== true);
 
+
     if (availableCount) {
       availableCount.textContent = availableSongs.length;
     }
@@ -228,7 +229,7 @@ async function loadListenerLibrary() {
        CREATE LIBRARY SONG CARDS
        ================================================= */
 
-    songs.forEach((song) => {
+    availableSongs.forEach((song) => {
       if (!container) {
         return;
       }
@@ -376,7 +377,7 @@ async function playPurchasedSong(song) {
   try {
     const baseURL = getAPIBaseURL();
 
-    const streamURL = `${baseURL}/api/stream/${user.id}/${song.song_id}`;
+    const streamURL = `${baseURL}/stream/${user.id}/${song.song_id}`;
 
     console.log("PROTECTED STREAM:", streamURL);
 
@@ -902,7 +903,7 @@ async function createScreamPayment() {
 
     const baseURL = getAPIBaseURL();
 
-    const uploadResponse = await fetch(`${baseURL}/api/payments/upload-proof`, {
+    const uploadResponse = await fetch(`${baseURL}/payments/upload-proof`, {
       method: "POST",
       body: formData,
     });
@@ -1051,6 +1052,11 @@ if (user) {
 /* Discover is public */
 loadDiscoverMusic();
 });
+
+
+
+
+
 
 
 

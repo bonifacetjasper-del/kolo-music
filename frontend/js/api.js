@@ -130,12 +130,55 @@ async function apiPost(endpoint, data = {}) {
 }
 
 /* ==========================================
+   PUT REQUEST
+========================================== */
+
+async function apiPut(endpoint, data = {}) {
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      let message = `PUT ${endpoint} failed: ${response.status}`;
+
+      try {
+        const errorData = await response.json();
+
+        if (errorData.detail) {
+          if (Array.isArray(errorData.detail)) {
+            message = errorData.detail
+              .map((error) => error.msg || JSON.stringify(error))
+              .join(", ");
+          } else {
+            message = errorData.detail;
+          }
+        }
+      } catch (error) {
+        console.error("Unable to read PUT error response:", error);
+      }
+
+      throw new Error(message);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("API PUT ERROR:", error);
+    throw error;
+  }
+}
+
+
+/* ==========================================
    GLOBAL KOLO API OBJECT
 ========================================== */
 
 window.KOLO_API = {
   get: apiGet,
   post: apiPost,
+  put: apiPut,
   url: API_URL,
   baseURL: API_URL,
 };
@@ -145,3 +188,5 @@ window.KOLO_API = {
 ========================================== */
 
 console.log("KOLO API CONNECTED:", API_URL);
+
+

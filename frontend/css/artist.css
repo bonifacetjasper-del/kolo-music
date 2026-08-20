@@ -1,5 +1,5 @@
-/* =========================================================
-   KOLO MUSIC — ARTIST DASHBOARD
+﻿/* =========================================================
+   KOLO MUSIC â€” ARTIST DASHBOARD
    artist.css
 ========================================================= */
 
@@ -1516,5 +1516,134 @@ a {
 
         border-radius: 18px;
     }
+
+}
+/* =========================================================
+   ARTIST / LISTENER BUTTON
+========================================================= */
+
+.listen-music-button {
+    width: 100%;
+    padding: 12px 14px;
+
+    margin-bottom: 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+
+    background: #1b1b1b;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.listen-music-button:hover {
+    background: #252525;
+
+    border-color: rgba(255, 255, 255, 0.25);
+
+    transform: translateY(-1px);
+}
+
+.listen-music-button:active {
+    transform: translateY(0);
+}
+
+/* Mobile */
+
+@media (max-width: 900px) {
+
+    .listen-music-button {
+        padding: 13px 14px;
+    }
+
+}
+
+
+/* =========================================================
+   ARTIST MOBILE MENU BUTTON
+   ========================================================= */
+
+.mobile-menu-button {
+  display: none;
+
+  width: 44px;
+  height: 44px;
+
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  border-radius: 10px;
+
+  background: #181818;
+
+  cursor: pointer;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.mobile-menu-button span {
+  display: block;
+
+  width: 20px;
+  height: 2px;
+
+  background: #ffffff;
+
+  border-radius: 2px;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.mobile-menu-button:hover {
+  background: #222222;
+}
+
+.mobile-menu-button:active {
+  transform: scale(0.95);
+}
+
+/* OPEN STATE */
+
+.mobile-menu-button.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.mobile-menu-button.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-button.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+
+  .mobile-menu-button {
+    display: flex;
+  }
 
 }

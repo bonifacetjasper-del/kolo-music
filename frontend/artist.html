@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 
 <html lang="en">
   <head>
@@ -6,7 +6,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>KOLO MUSIC — Artist Dashboard</title>
+    <title>KOLO MUSIC â€” Artist Dashboard</title>
 
     <!-- Artist Dashboard CSS -->
     <link rel="stylesheet" href="css/artist.css" />
@@ -24,7 +24,7 @@
          SIDEBAR
     ====================================== -->
 
-      <aside class="artist-sidebar">
+      <aside id="artistSidebar" class="artist-sidebar">
         <div class="artist-logo">
           <h1>KOLO</h1>
           <span>MUSIC</span>
@@ -53,6 +53,13 @@
         </nav>
 
         <div class="sidebar-bottom">
+          <button
+            type="button"
+            id="listenMusicButton"
+            class="listen-music-button"
+          >
+            🎵 Listen to Music
+          </button>
           <button type="button" id="logoutButton" class="logout-button">
             Logout
           </button>
@@ -63,7 +70,16 @@
          MAIN CONTENT
     ====================================== -->
 
-      <main class="artist-main">
+      <!-- =========================================
+     MOBILE SIDEBAR OVERLAY
+========================================== -->
+
+<div
+  id="sidebarOverlay"
+  class="sidebar-overlay"
+  aria-hidden="true"
+></div>
+<main class="artist-main">
         <!-- =================================
              HEADER
         ================================== -->
@@ -71,13 +87,16 @@
         <header class="artist-header">
           <div class="header-left">
             <button
-              type="button"
-              id="mobileMenuButton"
-              class="mobile-menu-button"
-              aria-label="Open menu"
-            >
-              ☰
-            </button>
+  type="button"
+  id="mobileMenuButton"
+  class="mobile-menu-button"
+  aria-label="Open artist menu"
+  aria-expanded="false"
+>
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
 
             <div>
               <p class="page-label">ARTIST DASHBOARD</p>
@@ -309,8 +328,9 @@
      WITHDRAWAL MODAL
 ========================================== -->
 
-    <div id="withdrawModal" class="modal hidden">
+    <div id="withdrawModal" class="modal hidden" aria-hidden="true">
       <div class="modal-content">
+
         <button
           type="button"
           id="closeWithdrawModal"
@@ -322,10 +342,17 @@
 
         <h3>Request Withdrawal</h3>
 
-        <p>Enter the amount you want to withdraw.</p>
+        <p>
+          Enter your withdrawal amount and Mobile Money details.
+        </p>
 
         <form id="withdrawForm">
-          <label for="withdrawAmount"> Amount (LD) </label>
+
+          <!-- AMOUNT -->
+
+          <label for="withdrawAmount">
+            Amount (LD)
+          </label>
 
           <input
             type="number"
@@ -337,15 +364,70 @@
             required
           />
 
+          <!-- PAYMENT METHOD -->
+
+          <label for="withdrawPaymentMethod">
+            Mobile Money Provider
+          </label>
+
+          <select
+            id="withdrawPaymentMethod"
+            name="payment_method"
+            required
+          >
+            <option value="">Select provider</option>
+            <option value="Lonestar Cell MTN">
+              Lonestar Cell MTN
+            </option>
+            <option value="Orange Money">
+              Orange Money
+            </option>
+          </select>
+
+          <!-- ACCOUNT NAME -->
+
+          <label for="withdrawMobileMoneyName">
+            Mobile Money Account Name
+          </label>
+
+          <input
+            type="text"
+            id="withdrawMobileMoneyName"
+            name="mobile_money_name"
+            placeholder="Enter account name"
+            autocomplete="name"
+            required
+          />
+
+          <!-- PHONE NUMBER -->
+
+          <label for="withdrawMobileMoneyNumber">
+            Mobile Money Number
+          </label>
+
+          <input
+            type="tel"
+            id="withdrawMobileMoneyNumber"
+            name="mobile_money_number"
+            placeholder="Enter Mobile Money number"
+            autocomplete="tel"
+            required
+          />
+
           <p id="withdrawMessage" class="form-message"></p>
 
-          <button type="submit" class="primary-button">
+          <button
+            type="submit"
+            id="submitWithdrawalButton"
+            class="primary-button"
+          >
             Submit Withdrawal
           </button>
+
         </form>
+
       </div>
     </div>
-
     <!-- =========================================
      JAVASCRIPT
      
@@ -356,3 +438,9 @@
     <script src="js/artist.js"></script>
   </body>
 </html>
+
+
+
+
+
+

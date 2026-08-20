@@ -667,6 +667,10 @@ def get_pending_withdrawals(
 
     try:
 
+        # ------------------------------------------
+        # GET PENDING WITHDRAWALS
+        # ------------------------------------------
+
         withdrawals = (
             supabase
             .table("withdrawals")
@@ -677,13 +681,24 @@ def get_pending_withdrawals(
 
         withdrawal_data = withdrawals.data or []
 
-        # Add user information to each withdrawal
+        # ------------------------------------------
+        # ADD ARTIST + REVENUE INFORMATION
+        # ------------------------------------------
+
         for withdrawal in withdrawal_data:
 
             user_id = withdrawal.get("user_id")
 
+            withdrawal["artist_name"] = "Unknown Artist"
+            withdrawal["total_revenue"] = 0
+            withdrawal["artist_revenue"] = 0
+
             if not user_id:
                 continue
+
+            # --------------------------------------
+            # GET USER
+            # --------------------------------------
 
             user_result = (
                 supabase
@@ -693,8 +708,9 @@ def get_pending_withdrawals(
                 .execute()
             )
 
-            if user_result.data:
+            user = None
 
+            if user_result.data:
                 user = user_result.data[0]
 
                 withdrawal["full_name"] = user.get(
@@ -708,6 +724,110 @@ def get_pending_withdrawals(
                 withdrawal["role"] = user.get(
                     "role"
                 )
+
+            # --------------------------------------
+            # GET ARTIST
+            # --------------------------------------
+
+            artist_result = (
+                supabase
+                .table("artists")
+                .select("id,artist_name,status")
+                .eq("user_id", user_id)
+                .execute()
+            )
+
+            if not artist_result.data:
+                withdrawal["artist_name"] = (
+                    user.get("full_name")
+                    if user
+                    else "Unknown Artist"
+                )
+
+                continue
+
+            artist = artist_result.data[0]
+
+            withdrawal["artist_name"] = (
+                artist.get("artist_name")
+                or (
+                    user.get("full_name")
+                    if user
+                    else "Unknown Artist"
+                )
+            )
+
+            artist_id = artist.get("id")
+
+            if not artist_id:
+                continue
+
+            # --------------------------------------
+            # GET ARTIST SONGS
+            # --------------------------------------
+
+            songs_result = (
+                supabase
+                .table("songs")
+                .select("id")
+                .eq("artist_id", artist_id)
+                .execute()
+            )
+
+            songs = songs_result.data or []
+
+            song_ids = [
+                song.get("id")
+                for song in songs
+                if song.get("id")
+            ]
+
+            if not song_ids:
+                continue
+
+            # --------------------------------------
+            # GET APPROVED PAYMENTS
+            # --------------------------------------
+
+            total_revenue = 0
+            artist_revenue = 0
+
+            for song_id in song_ids:
+
+                payments_result = (
+                    supabase
+                    .table("payments")
+                    .select(
+                        "amount,artist_amount,status"
+                    )
+                    .eq("song_id", song_id)
+                    .eq("status", "approved")
+                    .execute()
+                )
+
+                payments = payments_result.data or []
+
+                for payment in payments:
+
+                    total_revenue += int(
+                        payment.get("amount") or 0
+                    )
+
+                    artist_revenue += int(
+                        payment.get("artist_amount") or 0
+                    )
+
+            # --------------------------------------
+            # ATTACH REVENUE
+            # --------------------------------------
+
+            withdrawal["total_revenue"] = total_revenue
+
+            withdrawal["artist_revenue"] = artist_revenue
+
+        # ------------------------------------------
+        # RETURN
+        # ------------------------------------------
 
         return {
             "withdrawals": withdrawal_data
@@ -727,7 +847,6 @@ def get_pending_withdrawals(
 
 
 # ==========================================
-# APPROVE WITHDRAWAL
 # ==========================================
 
 @router.post("/withdrawals/{withdrawal_id}/approve")
@@ -938,6 +1057,10 @@ def reject_withdrawal(
 
     try:
 
+        # ======================================
+        # VERIFY WITHDRAWAL EXISTS
+        # ======================================
+
         existing = (
             supabase
             .table("withdrawals")
@@ -955,6 +1078,10 @@ def reject_withdrawal(
 
         withdrawal = existing.data[0]
 
+        # ======================================
+        # PREVENT DOUBLE REJECTION
+        # ======================================
+
         if withdrawal.get("status") == "rejected":
 
             return {
@@ -963,6 +1090,10 @@ def reject_withdrawal(
                 "withdrawal": withdrawal
             }
 
+        # ======================================
+        # PREVENT REJECTING APPROVED WITHDRAWAL
+        # ======================================
+
         if withdrawal.get("status") == "approved":
 
             raise HTTPException(
@@ -970,20 +1101,91 @@ def reject_withdrawal(
                 detail="An approved withdrawal cannot be rejected."
             )
 
+        # ======================================
+        # REJECT THROUGH DATABASE RPC
+        #
+        # The RPC:
+        # 1. Locks the withdrawal
+        # 2. Locks the artist wallet
+        # 3. Returns the reserved amount
+        # 4. Marks withdrawal as rejected
+        # ======================================
+
         result = (
             supabase
-            .table("withdrawals")
-            .update({
-                "status": "rejected"
-            })
-            .eq("id", withdrawal_id)
+            .rpc(
+                "reject_kolo_withdrawal",
+                {
+                    "p_withdrawal_id": withdrawal_id
+                }
+            )
             .execute()
         )
 
+        if not result.data:
+
+            raise HTTPException(
+                status_code=500,
+                detail="Withdrawal rejection returned no result."
+            )
+
+        rejection = result.data
+
+        if isinstance(rejection, list):
+
+            if not rejection:
+
+                raise HTTPException(
+                    status_code=500,
+                    detail="Withdrawal rejection returned empty result."
+                )
+
+            rejection = rejection[0]
+
+        # ======================================
+        # CHECK RPC RESULT
+        # ======================================
+
+        if not rejection.get("success", False):
+
+            raise HTTPException(
+                status_code=400,
+                detail=rejection.get(
+                    "message",
+                    "Unable to reject withdrawal."
+                )
+            )
+
+        # ======================================
+        # RETURN COMPLETE RESULT
+        # ======================================
+
         return {
+
             "success": True,
-            "message": "Withdrawal rejected",
-            "withdrawal": result.data
+
+            "message": rejection.get(
+                "message",
+                "Withdrawal rejected and funds returned to wallet"
+            ),
+
+            "withdrawal_id": rejection.get(
+                "withdrawal_id",
+                withdrawal_id
+            ),
+
+            "user_id": withdrawal.get(
+                "user_id"
+            ),
+
+            "amount_returned": rejection.get(
+                "amount_returned",
+                withdrawal.get("amount")
+            ),
+
+            "new_balance": rejection.get(
+                "new_balance"
+            )
         }
 
     except HTTPException:
@@ -998,7 +1200,7 @@ def reject_withdrawal(
 
         raise HTTPException(
             status_code=500,
-            detail="Unable to reject withdrawal"
+            detail=str(e)
         )
 
 
@@ -1435,13 +1637,20 @@ def get_all_withdrawals(
 
         withdrawal_data = withdrawals.data or []
 
-        # Add user/mobile-money information
+        # ==========================================
+        # ADD USER, ARTIST AND REVENUE INFORMATION
+        # ==========================================
+
         for withdrawal in withdrawal_data:
 
             user_id = withdrawal.get("user_id")
 
             if not user_id:
                 continue
+
+            # --------------------------------------
+            # GET USER
+            # --------------------------------------
 
             user_result = (
                 supabase
@@ -1467,6 +1676,111 @@ def get_all_withdrawals(
                     "role"
                 )
 
+            # --------------------------------------
+            # GET ARTIST
+            # --------------------------------------
+
+            artist_result = (
+                supabase
+                .table("artists")
+                .select("id,artist_name,status")
+                .eq("user_id", user_id)
+                .execute()
+            )
+
+            artist = (
+                artist_result.data[0]
+                if artist_result.data
+                else None
+            )
+
+            if not artist:
+                withdrawal["artist_name"] = (
+                    withdrawal.get("full_name")
+                    or "Unknown Artist"
+                )
+
+                withdrawal["total_revenue"] = 0
+
+                withdrawal["artist_revenue"] = 0
+
+                continue
+
+            artist_id = artist.get("id")
+
+            withdrawal["artist_name"] = (
+                artist.get("artist_name")
+                or "Unknown Artist"
+            )
+
+            # --------------------------------------
+            # GET ARTIST SONGS
+            # --------------------------------------
+
+            songs_result = (
+                supabase
+                .table("songs")
+                .select("id")
+                .eq("artist_id", artist_id)
+                .execute()
+            )
+
+            songs = songs_result.data or []
+
+            song_ids = [
+                song.get("id")
+                for song in songs
+                if song.get("id")
+            ]
+
+            total_revenue = 0
+            artist_revenue = 0
+
+            # --------------------------------------
+            # GET APPROVED PAYMENTS
+            # --------------------------------------
+
+            for song_id in song_ids:
+
+                payments_result = (
+                    supabase
+                    .table("payments")
+                    .select(
+                        "amount,artist_amount,status"
+                    )
+                    .eq("song_id", song_id)
+                    .eq("status", "approved")
+                    .execute()
+                )
+
+                payments = payments_result.data or []
+
+                for payment in payments:
+
+                    total_revenue += int(
+                        payment.get("amount") or 0
+                    )
+
+                    artist_revenue += int(
+                        payment.get("artist_amount") or 0
+                    )
+
+            # --------------------------------------
+            # ATTACH REVENUE
+            # --------------------------------------
+
+            withdrawal["total_revenue"] = (
+                total_revenue
+            )
+
+            withdrawal["artist_revenue"] = (
+                artist_revenue
+            )
+
+        # ==========================================
+        # RETURN WITHDRAWALS
+        # ==========================================
+
         return {
             "withdrawals": withdrawal_data
         }
@@ -1482,4 +1796,6 @@ def get_all_withdrawals(
             status_code=500,
             detail="Unable to load withdrawals"
         )
+
+
 

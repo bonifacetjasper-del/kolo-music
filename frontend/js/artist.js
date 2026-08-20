@@ -1,5 +1,5 @@
-/* =========================================================
-   KOLO MUSIC — ARTIST DASHBOARD
+﻿/* =========================================================
+   KOLO MUSIC â€” ARTIST DASHBOARD
    artist.js
 ========================================================= */
 
@@ -280,7 +280,7 @@ function loadArtistSongs(songs) {
   if (!Array.isArray(songs) || songs.length === 0) {
     container.innerHTML = `
             <div class="empty-state">
-                <div class="empty-icon">♫</div>
+                <div class="empty-icon">â™«</div>
 
                 <h4>No songs uploaded yet</h4>
 
@@ -412,7 +412,7 @@ async function loadArtistWithdrawals() {
     if (withdrawals.length === 0) {
       container.innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-icon">↗</div>
+                    <div class="empty-icon">â†—</div>
 
                     <h4>No withdrawals yet</h4>
 
@@ -533,23 +533,17 @@ async function requestWithdrawal(event) {
 
   if (!user || !user.id) {
     alert("Please login again.");
-
-    window.location.href = "login.html";
-
     return;
   }
 
-  if (!window.KOLO_API || typeof window.KOLO_API.post !== "function") {
-    alert("API connection is unavailable.");
-
-    return;
-  }
+  /* =========================================
+     WITHDRAWAL AMOUNT
+  ========================================= */
 
   const input = document.getElementById("withdrawAmount");
 
   if (!input) {
     alert("Withdrawal amount field not found.");
-
     return;
   }
 
@@ -557,11 +551,64 @@ async function requestWithdrawal(event) {
 
   if (!Number.isFinite(amount) || amount <= 0) {
     alert("Enter a valid withdrawal amount.");
-
     return;
   }
 
-  const submitButton = document.getElementById("submitWithdrawalButton");
+  /* =========================================
+     PAYMENT INFORMATION
+  ========================================= */
+
+  const paymentMethodInput =
+    document.getElementById("withdrawPaymentMethod");
+
+  const mobileMoneyNameInput =
+    document.getElementById("withdrawMobileMoneyName");
+
+  const mobileMoneyNumberInput =
+    document.getElementById("withdrawMobileMoneyNumber");
+
+  if (
+    !paymentMethodInput ||
+    !mobileMoneyNameInput ||
+    !mobileMoneyNumberInput
+  ) {
+    alert("Withdrawal payment fields are missing.");
+    return;
+  }
+
+  const paymentMethod =
+    paymentMethodInput.value.trim();
+
+  const mobileMoneyName =
+    mobileMoneyNameInput.value.trim();
+
+  const mobileMoneyNumber =
+    mobileMoneyNumberInput.value.trim();
+
+  if (!paymentMethod) {
+    alert("Please select a Mobile Money provider.");
+    paymentMethodInput.focus();
+    return;
+  }
+
+  if (!mobileMoneyName) {
+    alert("Please enter the Mobile Money account name.");
+    mobileMoneyNameInput.focus();
+    return;
+  }
+
+  if (!mobileMoneyNumber) {
+    alert("Please enter the Mobile Money number.");
+    mobileMoneyNumberInput.focus();
+    return;
+  }
+
+  /* =========================================
+     SUBMIT BUTTON
+  ========================================= */
+
+  const submitButton =
+    document.getElementById("submitWithdrawalButton");
 
   if (submitButton) {
     submitButton.disabled = true;
@@ -569,39 +616,70 @@ async function requestWithdrawal(event) {
   }
 
   try {
-    const response = await window.KOLO_API.post("/artist/withdraw", {
-      amount: amount,
-    });
 
-    console.log("Withdrawal response:", response);
+    /* =========================================
+       SEND WITHDRAWAL REQUEST
+    ========================================= */
+
+    const response = await window.KOLO_API.post(
+      "/artist/withdraw",
+      {
+        amount: amount,
+        payment_method: paymentMethod,
+        mobile_money_name: mobileMoneyName,
+        mobile_money_number: mobileMoneyNumber
+      }
+    );
+
+    console.log(
+      "Withdrawal response:",
+      response
+    );
 
     if (!response || response.success === false) {
       throw new Error(
         response && response.message
           ? response.message
-          : "Withdrawal request failed.",
+          : "Withdrawal request failed."
       );
     }
 
-    alert(response.message || "Withdrawal request submitted.");
+    alert(
+      response.message ||
+      "Withdrawal request submitted successfully."
+    );
 
     closeWithdrawModal();
+
+    /* =========================================
+       REFRESH DASHBOARD
+    ========================================= */
 
     await loadArtistDashboard();
 
     await loadArtistWithdrawals();
-  } catch (error) {
-    console.error("Withdrawal error:", error);
 
-    alert(error.message || "Unable to request withdrawal.");
+  } catch (error) {
+
+    console.error(
+      "Withdrawal error:",
+      error
+    );
+
+    alert(
+      error.message ||
+      "Unable to request withdrawal."
+    );
+
   } finally {
+
     if (submitButton) {
       submitButton.disabled = false;
-      submitButton.textContent = "Submit Withdrawal";
+      submitButton.textContent =
+        "Submit Withdrawal";
     }
   }
 }
-
 /* =========================================================
    NAVIGATION
 ========================================================= */
@@ -944,3 +1022,4 @@ window.listenToMusic = listenToMusic;
 window.goToListenerDashboard = goToListenerDashboard;
 
 window.goToMarketplace = goToMarketplace;
+

@@ -224,7 +224,7 @@ async function savePlatformSettings() {
          * Send settings to FastAPI.
          */
 
-        const response = await adminPost(
+        const response = await adminPut(
             "/settings",
             {
                 scream_price: screamPrice,
@@ -440,6 +440,19 @@ async function adminGet(endpoint) {
   }
 }
 
+
+/* ==========================================
+   API PUT HELPER
+========================================== */
+
+async function adminPut(endpoint, data = {}) {
+  try {
+    return await KOLO_API.put(endpoint, data);
+  } catch (error) {
+    console.error("Admin PUT error:", error);
+    throw error;
+  }
+}
 /* ==========================================
    API POST HELPER
 ========================================== */
@@ -833,7 +846,7 @@ async function approvePayment(paymentId, button) {
         */
 
     const response = await adminPost(
-      `/admin/payments/${paymentId}/approve`,
+      `/admin/payments/${paymentId}/approve`, 
       {},
     );
 
@@ -884,7 +897,7 @@ async function rejectPayment(paymentId, button) {
            /admin/payments/{payment_id}/reject
         */
 
-    const response = await adminPost(`/admin/payments/${paymentId}/reject`, {});
+    const response = await adminPut(`/admin/payments/${paymentId}/reject`, {});
 
     alert(response?.message || "Payment rejected.");
 
@@ -1149,7 +1162,7 @@ async function rejectSong(songId, button) {
   }
 
   try {
-    const response = await adminPost(`/admin/songs/${songId}/reject`, {});
+    const response = await adminPut(`/admin/songs/${songId}/reject`, {});
 
     alert(response?.message || "Song rejected.");
 
@@ -1396,7 +1409,7 @@ async function rejectArtist(artistId, button) {
   }
 
   try {
-    const response = await adminPost(`/admin/artists/${artistId}/reject`, {});
+    const response = await adminPut(`/admin/artists/${artistId}/reject`, {});
 
     alert(response?.message || "Artist rejected.");
 
@@ -1501,23 +1514,77 @@ async function loadAdminWithdrawals() {
                     </p>
 
                     <p>
+                    <p>
+                        Artist Name:
+                        <strong>
+                            ${escapeHTML(withdrawal.artist_name || withdrawal.full_name || "Unknown Artist")}
+                        </strong>
+                    </p>
+
+                    <p>
+                        Total Revenue:
+                        <strong>
+                            ${Number(withdrawal.total_revenue || 0).toLocaleString()} LD
+                        </strong>
+                    </p>
+
+                    <p>
+                        Artist Revenue:
+                        <strong>
+                            ${Number(withdrawal.artist_revenue || 0).toLocaleString()} LD
+                        </strong>
+                    </p>
+
+                    <p>
+                        Withdrawal Amount:
+                        <strong>
+                            ${Number(withdrawal.amount || 0).toLocaleString()} LD
+                        </strong>
+                    </p>
+
                         Request ID:
                         ${escapeHTML(withdrawalId || "N/A")}
                     </p>
-
                     ${
                       withdrawal.payment_method
                         ? `
                                 <p>
                                     Payment method:
-                                    ${escapeHTML(withdrawal.payment_method)}
+                                    <strong>
+                                        ${escapeHTML(withdrawal.payment_method)}
+                                    </strong>
                                 </p>
                             `
                         : ""
                     }
 
-                    <div
-                        class="admin-action-buttons"
+                    ${
+                      withdrawal.mobile_money_name
+                        ? `
+                                <p>
+                                    Mobile Money Account Name:
+                                    <strong>
+                                        ${escapeHTML(withdrawal.mobile_money_name)}
+                                    </strong>
+                                </p>
+                            `
+                        : ""
+                    }
+
+                    ${
+                      withdrawal.mobile_money_number
+                        ? `
+                                <p>
+                                    Mobile Money Number:
+                                    <strong>
+                                        ${escapeHTML(withdrawal.mobile_money_number)}
+                                    </strong>
+                                </p>
+                            `
+                        : ""
+                    }
+
+                    <div class="admin-action-buttons"
                     >
 
                         <button
@@ -1600,7 +1667,7 @@ async function approveWithdrawal(withdrawalId, button) {
 
   try {
     const response = await adminPost(
-      `/admin/withdrawals/${withdrawalId}/approve`,
+      `/admin/withdrawals/${withdrawalId}/approve`, 
       {},
     );
 
@@ -1642,7 +1709,7 @@ async function rejectWithdrawal(withdrawalId, button) {
   }
 
   try {
-    const response = await adminPost(
+    const response = await adminPut(
       `/admin/withdrawals/${withdrawalId}/reject`,
       {},
     );
@@ -1848,6 +1915,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   loadAdminDashboard();
 });
+
+
+
+
+
+
+
+
 
 
 
