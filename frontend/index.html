@@ -11,7 +11,7 @@
       content="KOLO MUSIC — Discover, support and listen to music from Liberian artists."
     />
 
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/style.css" />`r`n    <link rel="stylesheet" href="css/gallery.css" />`r`n    <link rel="stylesheet" href="css/search.css" />
   </head>
 
   <body>
@@ -36,12 +36,53 @@
         <a href="#about">About</a>
       </nav>
 
+      <div class="kolo-search-wrapper">
+  <div class="kolo-search-box">
+    <span class="kolo-search-icon">⌕</span>
+
+    <input
+      type="search"
+      id="koloSearchInput"
+      class="kolo-search-input"
+      placeholder="Search songs or artists..."
+      autocomplete="off"
+    />
+
+    <button
+      type="button"
+      id="koloSearchClear"
+      class="kolo-search-clear"
+      aria-label="Clear search"
+    >
+      ×
+    </button>
+  </div>
+
+  <div
+    id="koloSearchResults"
+    class="kolo-search-results"
+  ></div>
+</div>
+
       <div class="nav-buttons">
         <a href="login.html" class="login-btn"> Login </a>
 
         <a href="register.html" class="register-btn"> Get Started </a>
       </div>
-    </header>
+    </header>    
+    <!-- ==========================================
+       KOLO MUSIC GALLERY
+    =========================================== -->
+
+    <section class="kolo-gallery-section">
+      <div class="kolo-music-gallery">
+        <div class="gallery-loading">
+          Loading KOLO MUSIC...
+        </div>
+      </div>
+    </section>
+
+    
 
     <!-- ==========================================
        HERO
@@ -205,6 +246,19 @@
 
       <p class="footer-copyright">© 2026 KOLO MUSIC. All rights reserved.</p>
     </footer>
+  
+    <!-- ==========================================
+       KOLO MUSIC GALLERY JAVASCRIPT
+    =========================================== -->
+
+    <script src="js/api.js"></script>
+    <script src="js/gallery.js"></script>`r`n    <script src="js/search.js"></script>
+
   </body>
 </html>
+
+
+
+
+
 
