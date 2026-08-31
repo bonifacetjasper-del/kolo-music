@@ -1,7 +1,9 @@
 ﻿from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel
 
 from backend.database import supabase
 from backend.security import require_admin
+from backend.firebase_service import send_notification, send_admin_notification, send_user_notification
 
 
 # ==========================================
@@ -16,6 +18,166 @@ router = APIRouter(
 # ==========================================
 # KOLO MUSIC FINANCIAL SETTINGS
 # ==========================================
+
+
+# ==========================================
+# FIREBASE NOTIFICATION TOKEN
+# ==========================================
+
+class NotificationTokenRequest(BaseModel):
+    user_id: str
+    token: str
+    platform: str | None = None
+
+@router.post("/notification-token")
+def save_notification_token(
+    notification: NotificationTokenRequest
+):
+
+    try:
+
+        # ==========================================
+        # VALIDATE INPUT
+        # ==========================================
+
+        if not notification.user_id:
+            raise HTTPException(
+                status_code=400,
+                detail="User ID is required"
+            )
+
+        if not notification.token:
+            raise HTTPException(
+                status_code=400,
+                detail="Notification token is required"
+            )
+
+        # ==========================================
+        # CHECK WHETHER THIS TOKEN ALREADY EXISTS
+        # ==========================================
+
+        existing = (
+            supabase
+            .table("notification_tokens")
+            .select("id,user_id,token,platform")
+            .eq("token", notification.token)
+            .limit(1)
+            .execute()
+        )
+
+        existing_data = existing.data or []
+
+        # ==========================================
+        # UPDATE EXISTING TOKEN
+        # ==========================================
+
+        if existing_data:
+
+            existing_token = existing_data[0]
+
+            result = (
+                supabase
+                .table("notification_tokens")
+                .update({
+                    "user_id": notification.user_id,
+                    "platform": notification.platform or "web"
+                })
+                .eq("id", existing_token["id"])
+                .execute()
+            )
+
+        # ==========================================
+        # CREATE NEW TOKEN
+        # ==========================================
+
+        else:
+
+            result = (
+                supabase
+                .table("notification_tokens")
+                .insert({
+                    "user_id": notification.user_id,
+                    "token": notification.token,
+                    "platform": notification.platform or "web"
+                })
+                .execute()
+            )
+
+        return {
+            "success": True,
+            "message": "Notification token saved",
+            "data": result.data
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+
+        print(
+            "NOTIFICATION TOKEN ERROR:",
+            repr(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Unable to save notification token: "
+                f"{str(e)}"
+            )
+        )
+
+
+# ==========================================
+# REMOVE NOTIFICATION TOKEN
+# ==========================================
+
+class RemoveNotificationTokenRequest(BaseModel):
+    token: str
+
+
+@router.post("/notification-token/remove")
+def remove_notification_token(
+    notification: RemoveNotificationTokenRequest
+):
+
+    try:
+
+        if not notification.token:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Notification token is required"
+            )
+
+        result = (
+            supabase
+            .table("notification_tokens")
+            .delete()
+            .eq("token", notification.token)
+            .execute()
+        )
+
+        return {
+            "success": True,
+            "message": "Notification token removed",
+            "data": result.data or []
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+
+        print(
+            "REMOVE NOTIFICATION TOKEN ERROR:",
+            repr(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to remove notification token"
+        )
 
 def get_platform_settings():
     """
@@ -121,17 +283,154 @@ def get_pending_artists(
 
     try:
 
-        result = (
+        # ==========================================
+        # GET PENDING ARTISTS
+        # ==========================================
+
+        artist_result = (
             supabase
             .table("artists")
             .select("*")
             .eq("status", "pending")
+            .order("created_at", desc=True)
             .execute()
         )
 
+        artists = artist_result.data or []
+
+        if not artists:
+
+            return {
+                "artists": []
+            }
+
+        # ==========================================
+        # GET USER PROFILES
+        # ==========================================
+
+        user_ids = [
+            artist.get("user_id")
+            for artist in artists
+            if artist.get("user_id")
+        ]
+
+        users_by_id = {}
+
+        if user_ids:
+
+            user_result = (
+                supabase
+                .table("users")
+                .select("id,full_name,phone,role")
+                .in_("id", user_ids)
+                .execute()
+            )
+
+            for user in user_result.data or []:
+
+                users_by_id[
+                    str(user["id"])
+                ] = user
+
+        # ==========================================
+        # GET AUTH EMAILS
+        # ==========================================
+
+        auth_users_by_id = {}
+
+        for user_id in user_ids:
+
+            try:
+
+                auth_response = (
+                    supabase
+                    .auth
+                    .admin
+                    .get_user_by_id(str(user_id))
+                )
+
+                auth_user = getattr(
+                    auth_response,
+                    "user",
+                    None
+                )
+
+                if auth_user:
+
+                    auth_users_by_id[
+                        str(user_id)
+                    ] = auth_user
+
+            except Exception as auth_error:
+
+                print(
+                    "PENDING ARTIST AUTH EMAIL ERROR:",
+                    str(user_id),
+                    repr(auth_error)
+                )
+
+        # ==========================================
+        # BUILD COMPLETE ARTIST RECORDS
+        # ==========================================
+
+        enriched_artists = []
+
+        for artist in artists:
+
+            user_id = artist.get("user_id")
+
+            user = users_by_id.get(
+                str(user_id),
+                {}
+            )
+
+            auth_user = auth_users_by_id.get(
+                str(user_id)
+            )
+
+            auth_email = ""
+
+            if auth_user:
+
+                auth_email = (
+                    getattr(
+                        auth_user,
+                        "email",
+                        None
+                    )
+                    or ""
+                )
+
+            enriched_artist = {
+                **artist,
+
+                "full_name": (
+                    user.get("full_name")
+                    or "Not provided"
+                ),
+
+                "phone": (
+                    user.get("phone")
+                    or "Not provided"
+                ),
+
+                "email": (
+                    auth_email
+                    or "Not provided"
+                )
+            }
+
+            enriched_artists.append(
+                enriched_artist
+            )
+
         return {
-            "artists": result.data or []
+            "artists": enriched_artists
         }
+
+    except HTTPException:
+
+        raise
 
     except Exception as e:
 
@@ -193,10 +492,47 @@ def approve_artist(
             .execute()
         )
 
+        # ==========================================
+        # NOTIFY ARTIST
+        # ==========================================
+
+        notification_result = None
+
+        user_id = artist.get("user_id")
+
+        if user_id:
+
+            try:
+
+                notification_result = send_user_notification(
+                    user_id=user_id,
+                    title="Artist Account Approved",
+                    body="Your KOLO MUSIC artist account has been approved.",
+                    data={
+                        "type": "artist_approved",
+                        "artist_id": str(artist_id)
+                    }
+                )
+
+            except Exception as notification_error:
+
+                print(
+                    "ARTIST APPROVAL NOTIFICATION ERROR:",
+                    repr(notification_error)
+                )
+
+        else:
+
+            print(
+                "ARTIST APPROVAL NOTIFICATION SKIPPED: "
+                "artist user_id not found"
+            )
+
         return {
             "success": True,
             "message": "Artist approved",
-            "artist": result.data
+            "artist": result.data,
+            "notification": notification_result
         }
 
     except HTTPException:
@@ -252,10 +588,60 @@ def reject_artist(
             .execute()
         )
 
+        # ==========================================
+        # NOTIFY ARTIST
+        # ==========================================
+
+        notification_result = None
+
+        user_id = None
+
+        artist_full = (
+            supabase
+            .table("artists")
+            .select("user_id")
+            .eq("id", artist_id)
+            .limit(1)
+            .execute()
+        )
+
+        if artist_full.data:
+
+            user_id = artist_full.data[0].get("user_id")
+
+        if user_id:
+
+            try:
+
+                notification_result = send_user_notification(
+                    user_id=user_id,
+                    title="Artist Account Rejected",
+                    body="Your KOLO MUSIC artist account has been rejected.",
+                    data={
+                        "type": "artist_rejected",
+                        "artist_id": str(artist_id)
+                    }
+                )
+
+            except Exception as notification_error:
+
+                print(
+                    "ARTIST REJECTION NOTIFICATION ERROR:",
+                    repr(notification_error)
+                )
+
+        else:
+
+            print(
+                "ARTIST REJECTION NOTIFICATION SKIPPED: "
+                "artist user_id not found"
+            )
+
         return {
             "success": True,
             "message": "Artist rejected",
-            "artist": result.data
+            "artist": result.data,
+            "notification": notification_result
         }
 
     except HTTPException:
@@ -357,10 +743,76 @@ def approve_song(
             .execute()
         )
 
+        # ==========================================
+        # NOTIFY SONG OWNER
+        # ==========================================
+
+        notification_result = None
+
+        artist_id = song.get("artist_id")
+        user_id = None
+
+        if artist_id:
+
+            try:
+
+                artist_result = (
+                    supabase
+                    .table("artists")
+                    .select("user_id")
+                    .eq("id", artist_id)
+                    .limit(1)
+                    .execute()
+                )
+
+                if artist_result.data:
+
+                    user_id = artist_result.data[0].get("user_id")
+
+            except Exception as lookup_error:
+
+                print(
+                    "SONG APPROVAL ARTIST LOOKUP ERROR:",
+                    repr(lookup_error)
+                )
+
+        if user_id:
+
+            try:
+
+                notification_result = send_user_notification(
+                    user_id=user_id,
+                    title="Song Approved",
+                    body=(
+                        f'Your song "{song.get("title", "Untitled")}" '
+                        "has been approved and is now available on KOLO MUSIC."
+                    ),
+                    data={
+                        "type": "song_approved",
+                        "song_id": str(song_id),
+                        "artist_id": str(artist_id)
+                    }
+                )
+
+            except Exception as notification_error:
+
+                print(
+                    "SONG APPROVAL NOTIFICATION ERROR:",
+                    repr(notification_error)
+                )
+
+        else:
+
+            print(
+                "SONG APPROVAL NOTIFICATION SKIPPED: "
+                "artist user_id not found"
+            )
+
         return {
             "success": True,
             "message": "Song approved",
-            "song": result.data
+            "song": result.data,
+            "notification": notification_result
         }
 
     except HTTPException:
@@ -416,10 +868,92 @@ def reject_song(
             .execute()
         )
 
+        # ==========================================
+        # NOTIFY SONG OWNER
+        # ==========================================
+
+        notification_result = None
+
+        song_full = (
+            supabase
+            .table("songs")
+            .select("artist_id,title")
+            .eq("id", song_id)
+            .limit(1)
+            .execute()
+        )
+
+        artist_id = None
+        song_title = "Untitled"
+
+        if song_full.data:
+
+            artist_id = song_full.data[0].get("artist_id")
+            song_title = song_full.data[0].get("title") or "Untitled"
+
+        user_id = None
+
+        if artist_id:
+
+            try:
+
+                artist_result = (
+                    supabase
+                    .table("artists")
+                    .select("user_id")
+                    .eq("id", artist_id)
+                    .limit(1)
+                    .execute()
+                )
+
+                if artist_result.data:
+
+                    user_id = artist_result.data[0].get("user_id")
+
+            except Exception as lookup_error:
+
+                print(
+                    "SONG REJECTION ARTIST LOOKUP ERROR:",
+                    repr(lookup_error)
+                )
+
+        if user_id:
+
+            try:
+
+                notification_result = send_user_notification(
+                    user_id=user_id,
+                    title="Song Rejected",
+                    body=(
+                        f'Your song "{song_title}" '
+                        "has been rejected on KOLO MUSIC."
+                    ),
+                    data={
+                        "type": "song_rejected",
+                        "song_id": str(song_id),
+                        "artist_id": str(artist_id)
+                    }
+                )
+
+            except Exception as notification_error:
+
+                print(
+                    "SONG REJECTION NOTIFICATION ERROR:",
+                    repr(notification_error)
+                )
+
+        else:
+
+            print(
+                "SONG REJECTION NOTIFICATION SKIPPED: "
+                "artist user_id not found"
+            )
+
         return {
             "success": True,
             "message": "Song rejected",
-            "song": result.data
+            "song": result.data,
+            "notification": notification_result
         }
 
     except HTTPException:
@@ -1796,6 +2330,173 @@ def get_all_withdrawals(
             status_code=500,
             detail="Unable to load withdrawals"
         )
+
+
+
+
+
+
+
+
+
+
+
+# ==========================================
+# FIREBASE ADMIN NOTIFICATION TEST
+# ==========================================
+
+@router.post("/test-admin-notification")
+def test_admin_notification():
+
+    try:
+
+        result = send_admin_notification(
+            title="KOLO MUSIC ADMIN",
+            body="Admin notifications are working!",
+            data={
+                "type": "admin_test",
+                "source": "kolo_music",
+            },
+        )
+
+        return result
+
+    except Exception as e:
+
+        print(
+            "ADMIN NOTIFICATION TEST ERROR:",
+            repr(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unable to send admin notification: {str(e)}"
+        )
+
+
+# ==========================================
+# FIREBASE USER NOTIFICATION TEST
+# ==========================================
+
+class UserNotificationTestRequest(BaseModel):
+    user_id: str
+
+
+@router.post("/test-user-notification")
+def test_user_notification(
+    notification: UserNotificationTestRequest
+):
+
+    try:
+
+        if not notification.user_id:
+            raise HTTPException(
+                status_code=400,
+                detail="User ID is required"
+            )
+
+        result = send_user_notification(
+            user_id=notification.user_id,
+            title="KOLO MUSIC TEST",
+            body="User notification system is working!",
+            data={
+                "type": "user_test",
+                "source": "kolo_music"
+            }
+        )
+
+        return result
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+
+        print(
+            "USER NOTIFICATION TEST ERROR:",
+            repr(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unable to send user notification: {str(e)}"
+        )
+
+# ==========================================
+# FIREBASE NOTIFICATION TEST
+# ==========================================
+
+@router.post("/test-notification")
+def test_firebase_notification():
+
+    try:
+
+        result = (
+            supabase
+            .table("notification_tokens")
+            .select("token,user_id,platform")
+            .not_.in_(
+                "token",
+                [
+                    "TEST_KOLO_TOKEN_123",
+                    "TEST_CONNECTION_TOKEN"
+                ]
+            )
+            .order("created_at", desc=True)
+            .limit(1)
+            .execute()
+        )
+
+        tokens = result.data or []
+
+        if not tokens:
+            raise HTTPException(
+                status_code=404,
+                detail="No notification token found"
+            )
+
+        notification_token = tokens[0]["token"]
+
+        firebase_response = send_notification(
+            token=notification_token,
+            title="KOLO MUSIC",
+            body="Firebase notifications are working!",
+            data={
+                "type": "test",
+                "source": "kolo_music"
+            }
+        )
+
+        return {
+            "success": True,
+            "message": "Firebase notification sent successfully",
+            "firebase_response": firebase_response,
+            "user_id": tokens[0]["user_id"],
+            "platform": tokens[0]["platform"]
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+
+        print(
+            "FIREBASE TEST NOTIFICATION ERROR:",
+            repr(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unable to send Firebase notification: {str(e)}"
+        )
+
+
+
+
+
+
+
+
 
 
 

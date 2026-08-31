@@ -811,16 +811,44 @@ function goToMarketplace() {
    LOGOUT
 ========================================================= */
 
-function artistLogout() {
-  localStorage.removeItem("koloUser");
+async function artistLogout() {
 
-  localStorage.removeItem("koloRole");
+  try {
 
-  localStorage.removeItem("koloToken");
+    const notificationToken =
+      localStorage.getItem("koloNotificationToken");
 
-  window.location.href = "index.html";
+    if (notificationToken) {
+
+      await KOLO_API.post(
+        "/admin/notification-token/remove",
+        {
+          token: notificationToken
+        }
+      );
+
+      console.log(
+        "KOLO: Artist notification token removed."
+      );
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "KOLO: Unable to remove artist notification token:",
+      error
+    );
+
+  } finally {
+
+    localStorage.removeItem("koloUser");
+    localStorage.removeItem("koloRole");
+    localStorage.removeItem("koloToken");
+    localStorage.removeItem("koloNotificationToken");
+
+    window.location.href = "index.html";
+  }
 }
-
 /* =========================================================
    UPLOAD SONG
 ========================================================= */
@@ -1022,4 +1050,5 @@ window.listenToMusic = listenToMusic;
 window.goToListenerDashboard = goToListenerDashboard;
 
 window.goToMarketplace = goToMarketplace;
+
 

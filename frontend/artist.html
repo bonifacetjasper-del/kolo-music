@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 
 <html lang="en">
   <head>
@@ -6,7 +6,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>KOLO MUSIC â€” Artist Dashboard</title>
+    <title>KOLO MUSIC — Artist Dashboard</title>
 
     <!-- Artist Dashboard CSS -->
     <link rel="stylesheet" href="css/artist.css" />
@@ -47,9 +47,7 @@
             Withdrawals
           </button>
 
-          <button type="button" class="nav-item" data-section="profile">
-            Artist Profile
-          </button>
+          <a href="./artist_profile.html" class="nav-item">Artist Profile</a>
         </nav>
 
         <div class="sidebar-bottom">
@@ -58,7 +56,7 @@
             id="listenMusicButton"
             class="listen-music-button"
           >
-            🎵 Listen to Music
+            ?? Listen to Music
           </button>
           <button type="button" id="logoutButton" class="logout-button">
             Logout
@@ -337,7 +335,7 @@
           class="modal-close"
           aria-label="Close"
         >
-          ×
+          �
         </button>
 
         <h3>Request Withdrawal</h3>
@@ -436,8 +434,13 @@
 
     <script src="js/api.js"></script>
     <script src="js/artist.js"></script>
+      <!-- KOLO FIREBASE NOTIFICATIONS -->
+    <script type="module" src="./js/firebase/notifications.js"></script>
+
   </body>
 </html>
+
+
 
 
 

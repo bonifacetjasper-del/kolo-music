@@ -34,3 +34,8 @@ Desktop.ini
 node_modules/
 .vercel
 .env*
+
+firebase-service-account.json
+
+# Firebase Admin private credentials
+backend/firebase-service-account.json

@@ -961,14 +961,43 @@ async function createScreamPayment() {
    LOGOUT
    ========================================================= */
 
-function listenerLogout() {
-  localStorage.removeItem("koloUser");
+async function listenerLogout() {
 
-  localStorage.removeItem("koloRole");
+  try {
 
-  localStorage.removeItem("koloToken");
+    const notificationToken =
+      localStorage.getItem("koloNotificationToken");
 
-  window.location.href = "index.html";
+    if (notificationToken) {
+
+      await KOLO_API.post(
+        "/admin/notification-token/remove",
+        {
+          token: notificationToken
+        }
+      );
+
+      console.log(
+        "KOLO: Listener notification token removed."
+      );
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "KOLO: Unable to remove listener notification token:",
+      error
+    );
+
+  } finally {
+
+    localStorage.removeItem("koloUser");
+    localStorage.removeItem("koloRole");
+    localStorage.removeItem("koloToken");
+    localStorage.removeItem("koloNotificationToken");
+
+    window.location.href = "index.html";
+  }
 }
 
 /* =========================================================
@@ -1052,6 +1081,7 @@ if (user) {
 /* Discover is public */
 loadDiscoverMusic();
 });
+
 
 
 

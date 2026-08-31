@@ -1,0 +1,382 @@
+﻿:root {
+  --black: #080808;
+  --black-soft: #111111;
+  --card: #171717;
+  --gold: #ffd166;
+  --gold-dark: #c99b18;
+  --green: #16a34a;
+  --green-light: #5ee58a;
+  --red: #c1121f;
+  --white: #ffffff;
+  --muted: #999999;
+  --border: rgba(255,255,255,.09);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--white);
+  background:
+    radial-gradient(circle at top right, rgba(255,209,102,.07), transparent 30%),
+    radial-gradient(circle at bottom left, rgba(22,163,74,.06), transparent 30%),
+    var(--black);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
+
+.artist-profile-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  min-height: 78px;
+  padding: 14px clamp(18px,5vw,70px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: rgba(8,8,8,.96);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.back-button {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid rgba(255,209,102,.3);
+  color: var(--gold);
+  background: rgba(255,209,102,.05);
+  font-size: 24px;
+}
+
+.back-button:hover {
+  background: var(--gold);
+  color: #000;
+}
+
+.page-label,
+.section-label {
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.artist-profile-header h1 {
+  font-size: 23px;
+}
+
+.profile-status {
+  padding: 7px 13px;
+  border-radius: 30px;
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--green-light);
+  border: 1px solid rgba(22,163,74,.35);
+  background: rgba(22,163,74,.1);
+}
+
+.artist-profile-main {
+  width: min(1050px, 100%);
+  margin: auto;
+  padding: 45px clamp(18px,5vw,50px) 100px;
+}
+
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+  margin-bottom: 30px;
+  padding: 35px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: linear-gradient(145deg,#181818,#101010);
+}
+
+.profile-photo-section {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.profile-photo-wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+#artistProfilePhoto {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--gold);
+  background: #111;
+}
+
+.photo-edit-button {
+  position: absolute;
+  right: 2px;
+  bottom: 5px;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--green);
+  border: 3px solid #111;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.photo-edit-button:hover {
+  background: var(--gold);
+  color: #000;
+}
+
+.photo-help {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.profile-identity h2 {
+  margin: 5px 0;
+  font-size: clamp(27px,5vw,40px);
+}
+
+.profile-identity > p:not(.section-label) {
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.approval-badge {
+  display: inline-block;
+  padding: 6px 11px;
+  border-radius: 20px;
+  color: var(--green-light);
+  background: rgba(22,163,74,.1);
+  border: 1px solid rgba(22,163,74,.3);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.profile-card {
+  padding: 28px;
+  margin-bottom: 45px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.card-heading,
+.section-heading,
+.bio-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.card-heading {
+  margin-bottom: 18px;
+}
+
+.profile-card h2,
+.songs-section h2 {
+  margin-top: 3px;
+  font-size: 25px;
+}
+
+#artistBio {
+  width: 100%;
+  min-height: 150px;
+  padding: 15px;
+  resize: vertical;
+  border-radius: 13px;
+  border: 1px solid var(--border);
+  outline: none;
+  background: #0d0d0d;
+  color: white;
+  line-height: 1.6;
+}
+
+#artistBio:enabled {
+  border-color: var(--gold-dark);
+}
+
+.bio-footer {
+  margin-top: 10px;
+}
+
+.bio-footer small {
+  color: var(--muted);
+}
+
+.primary-button,
+.secondary-button {
+  min-height: 45px;
+  padding: 10px 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.primary-button {
+  background: linear-gradient(135deg,var(--gold),#d6a91d);
+  color: #000;
+}
+
+.primary-button:hover {
+  transform: translateY(-1px);
+}
+
+.secondary-button {
+  background: transparent;
+  color: var(--gold);
+  border-color: rgba(255,209,102,.3);
+}
+
+.secondary-button:hover {
+  background: rgba(255,209,102,.08);
+}
+
+.songs-section {
+  margin-top: 10px;
+}
+
+.section-heading {
+  margin-bottom: 22px;
+}
+
+.section-heading > div:first-child p:last-child {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.songs-message {
+  padding: 20px;
+  border-radius: 14px;
+  color: var(--muted);
+  background: #111;
+  border: 1px solid var(--border);
+}
+
+.artist-songs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+  gap: 18px;
+  margin-top: 15px;
+}
+
+.artist-song-card {
+  overflow: hidden;
+  border-radius: 17px;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+.artist-song-cover {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.artist-song-info {
+  padding: 17px;
+}
+
+.artist-song-info h3 {
+  margin-bottom: 5px;
+}
+
+.artist-song-status {
+  margin-bottom: 13px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.artist-play-button {
+  width: 100%;
+  min-height: 43px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--green);
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.artist-play-button:hover {
+  background: #19b653;
+}
+
+.artist-audio {
+  width: 100%;
+  margin-top: 12px;
+}
+
+@media (max-width: 650px) {
+
+  .artist-profile-header h1 {
+    font-size: 18px;
+  }
+
+  .profile-hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 25px 18px;
+  }
+
+  .profile-card {
+    padding: 20px;
+  }
+
+  .card-heading,
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .section-heading > a {
+    width: 100%;
+  }
+
+  .primary-button,
+  .secondary-button {
+    width: 100%;
+  }
+
+}

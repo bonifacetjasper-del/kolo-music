@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+﻿from fastapi import APIRouter, HTTPException
 
 from backend.database import supabase
 
@@ -230,7 +230,8 @@ def get_song(song_id: str):
 
 
 # ==========================================
-# SEARCH SONGS
+# ==========================================
+# SEARCH SONGS AND ARTISTS
 # ==========================================
 
 @router.get("/search")
@@ -247,21 +248,20 @@ def search_songs(query: str):
                 detail="Search query is required"
             )
 
+        # ======================================
+        # GET APPROVED SONGS
+        # ======================================
+
         songs_result = (
             supabase
             .table("songs")
             .select(
                 "id, title, description, "
-                "cover_image, artist_id, "
-                "created_at"
+                "cover_image, artist_id, created_at"
             )
             .eq(
                 "status",
                 "approved"
-            )
-            .ilike(
-                "title",
-                f"%{query}%"
             )
             .order(
                 "created_at",
@@ -274,22 +274,22 @@ def search_songs(query: str):
 
         result = []
 
+        # ======================================
+        # FILTER SONGS + ARTISTS
+        # ======================================
+
         for song in songs:
 
             artist_name = "Unknown Artist"
 
-            artist_id = song.get(
-                "artist_id"
-            )
+            artist_id = song.get("artist_id")
 
             if artist_id:
 
                 artist_result = (
                     supabase
                     .table("artists")
-                    .select(
-                        "artist_name"
-                    )
+                    .select("artist_name")
                     .eq(
                         "id",
                         artist_id
@@ -309,9 +309,30 @@ def search_songs(query: str):
                         )
                     )
 
+            title = str(
+                song.get("title") or ""
+            )
+
+            artist = str(
+                artist_name or ""
+            )
+
+            description = str(
+                song.get("description") or ""
+            )
+
+            search_text = (
+                f"{title} "
+                f"{artist} "
+                f"{description}"
+            ).lower()
+
+            if query.lower() not in search_text:
+
+                continue
+
             result.append(
                 {
-
                     "song_id":
                         song.get("id"),
 
@@ -332,7 +353,6 @@ def search_songs(query: str):
 
                     "currency":
                         "LD"
-
                 }
             )
 
@@ -357,8 +377,6 @@ def search_songs(query: str):
             detail="Unable to search songs"
         )
 
-
-# ==========================================
 # VIEW ARTIST PROFILE
 # ==========================================
 
@@ -641,3 +659,4 @@ def get_trending_songs():
             status_code=500,
             detail="Unable to load trending songs"
         )
+

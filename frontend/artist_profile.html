@@ -1,0 +1,169 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Artist Profile | KOLO MUSIC</title>
+
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/artist_profile.css">
+</head>
+
+<body class="artist-profile-page">
+
+<header class="artist-profile-header">
+
+  <div class="header-left">
+    <a href="./artist.html" class="back-button">←</a>
+
+    <div>
+      <p class="page-label">KOLO MUSIC</p>
+      <h1>Artist Profile</h1>
+    </div>
+  </div>
+
+  <div id="artistProfileStatus" class="profile-status">
+    LOADING
+  </div>
+
+</header>
+
+<main class="artist-profile-main">
+
+  <section class="profile-hero">
+
+    <div class="profile-photo-section">
+
+      <div class="profile-photo-wrapper">
+
+        <img
+          id="artistProfilePhoto"
+          src="./asserts/images/kolo-logo.png"
+          alt="Artist profile photo"
+        >
+
+        <label for="artistPhotoInput" class="photo-edit-button">
+          ✎
+        </label>
+
+      </div>
+
+      <input
+        type="file"
+        id="artistPhotoInput"
+        accept="image/jpeg,image/png,image/webp"
+        hidden
+      >
+
+      <p class="photo-help">
+        JPG, PNG or WEBP
+      </p>
+
+    </div>
+
+    <div class="profile-identity">
+
+      <p class="section-label">ARTIST</p>
+
+      <h2 id="artistProfileName">Artist</h2>
+
+      <p id="artistProfileEmail">Loading...</p>
+
+      <span id="artistApprovalBadge" class="approval-badge">
+        APPROVED ARTIST
+      </span>
+
+    </div>
+
+  </section>
+
+
+  <section class="profile-card">
+
+    <div class="card-heading">
+
+      <div>
+        <p class="section-label">ABOUT YOU</p>
+        <h2>Artist Bio</h2>
+      </div>
+
+      <button
+        type="button"
+        id="editBioButton"
+        class="secondary-button"
+      >
+        Edit Bio
+      </button>
+
+    </div>
+
+    <textarea
+      id="artistBio"
+      maxlength="1000"
+      placeholder="Tell listeners about yourself, your music and your journey..."
+      disabled
+    ></textarea>
+
+    <div class="bio-footer">
+
+      <small>
+        <span id="bioCharacterCount">0</span>/1000 characters
+      </small>
+
+      <button
+        type="button"
+        id="saveBioButton"
+        class="primary-button"
+        style="display:none"
+      >
+        Save Bio
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <section class="songs-section">
+
+    <div class="section-heading">
+
+      <div>
+        <p class="section-label">YOUR MUSIC</p>
+        <h2>My Uploaded Songs</h2>
+        <p>
+          Listen to your own uploaded songs for free.
+        </p>
+      </div>
+
+      <a
+        href="./artist_uploads.html"
+        class="primary-button"
+      >
+        + Upload Song
+      </a>
+
+    </div>
+
+    <div
+      id="artistSongsMessage"
+      class="songs-message"
+    >
+      Loading your songs...
+    </div>
+
+    <div
+      <div id="artistSongsContainer" class="artist-songs-grid"></div>
+
+  </section>
+
+</main>
+
+<script src="./js/api.js"></script>
+<script src="./js/auth.js"></script>
+<script src="./js/artist_profile.js"></script>
+
+</body>
+</html>
+

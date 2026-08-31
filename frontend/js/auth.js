@@ -1,4 +1,4 @@
-/* ==========================================
+﻿/* ==========================================
    KOLO MUSIC AUTHENTICATION SYSTEM
 ========================================== */
 
@@ -54,7 +54,41 @@ async function loginUser(event) {
       return;
     }
 
-    /* Save session */
+    /* ==========================================
+       SAVE AUTHENTICATED SESSION
+    ========================================== */
+
+    if (!response.access_token) {
+
+      throw new Error(
+        "Login failed: authentication token was not provided."
+      );
+
+    }
+
+    localStorage.setItem(
+      "koloAccessToken",
+      response.access_token
+    );
+
+    if (response.refresh_token) {
+
+      localStorage.setItem(
+        "koloRefreshToken",
+        response.refresh_token
+      );
+
+    }
+
+    localStorage.setItem(
+      "koloUser",
+      JSON.stringify(response.user)
+    );
+
+    localStorage.setItem(
+      "koloRole",
+      response.user.role
+    );
 
     localStorage.setItem("koloUser", JSON.stringify(response.user));
 
@@ -292,3 +326,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("KOLO MUSIC authentication ready.");
 });
+

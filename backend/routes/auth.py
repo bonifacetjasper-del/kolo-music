@@ -1,4 +1,4 @@
-# ==========================================
+﻿# ==========================================
 # KOLO MUSIC - AUTHENTICATION ROUTES
 # ==========================================
 
@@ -9,6 +9,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr
 
 from backend.database import supabase
+from backend.firebase_service import send_admin_notification
 
 
 # ==========================================
@@ -368,6 +369,37 @@ def register_user(user: RegisterUser):
                 raise HTTPException(
                     status_code=400,
                     detail=str(error_message)
+                )
+
+        # ==========================================
+        # NOTIFY ADMIN OF NEW ARTIST REGISTRATION
+        # ==========================================
+
+        if role == "artist":
+
+            try:
+
+                send_admin_notification(
+                    title="New Artist Registration",
+                    body=f"{artist_name} has registered and is waiting for approval.",
+                    data={
+                        "type": "new_artist",
+                        "user_id": user_id,
+                        "artist_name": artist_name,
+                        "status": "pending"
+                    }
+                )
+
+                print(
+                    "KOLO ADMIN NOTIFICATION: "
+                    "New artist notification sent."
+                )
+
+            except Exception as notification_error:
+
+                print(
+                    "KOLO ADMIN NOTIFICATION ERROR:",
+                    repr(notification_error)
                 )
 
         # ==================================

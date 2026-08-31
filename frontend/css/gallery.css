@@ -1,106 +1,127 @@
-
 /* =========================================================
-   KOLO MUSIC — PREMIUM MUSIC GALLERY
-   Black + KOLO Red
+   KOLO MUSIC — PREMIUM FEATURED GALLERY
+   Brand: Gold + Black + Liberia Green
 ========================================================= */
 
 .kolo-music-gallery {
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 10px 0;
-    overflow: hidden;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 18px 0;
+  overflow: hidden;
 }
 
 /* =========================================================
-   MAIN CARD
+   MAIN FEATURE CARD
 ========================================================= */
 
 .kolo-gallery-card {
-    position: relative;
+  position: relative;
 
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.85fr);
+  display: grid;
+  grid-template-columns: 46% 54%;
 
-    width: 100%;
-    min-height: 320px;
+  width: 100%;
+  min-height: 330px;
 
-    margin: 0 auto;
+  overflow: hidden;
 
-    overflow: hidden;
+  border-radius: 26px;
 
-    border-radius: 22px;
+  background:
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(244, 197, 66, 0.12),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 90% 90%,
+      rgba(22, 138, 69, 0.10),
+      transparent 30%
+    ),
+    #080808;
 
-    background:
-        radial-gradient(
-            circle at 85% 20%,
-            rgba(193, 18, 31, 0.20),
-            transparent 35%
-        ),
-        #090909;
+  border: 1px solid rgba(244, 197, 66, 0.14);
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.45),
+    0 0 45px rgba(244, 197, 66, 0.06);
 
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.35),
-        0 0 35px rgba(193, 18, 31, 0.08);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.kolo-gallery-card:hover {
+  border-color: rgba(244, 197, 66, 0.28);
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.5),
+    0 0 55px rgba(244, 197, 66, 0.09);
 }
 
 /* =========================================================
-   COVER
+   COVER AREA
 ========================================================= */
 
 .kolo-gallery-image-wrap {
-    position: relative;
+  position: relative;
 
-    min-height: 320px;
+  width: 100%;
+  height: 330px;
 
-    overflow: hidden;
+  overflow: hidden;
 
-    background: #050505;
+  background: #030303;
 }
 
 .kolo-gallery-image {
-    display: block;
+  display: block;
 
-    width: 100%;
-    height: 100%;
-    min-height: 320px;
+  width: 100%;
+  height: 100%;
 
-    object-fit: cover;
+  object-fit: cover;
+  object-position: center;
 
-    transition:
-        transform 0.7s ease,
-        filter 0.7s ease;
+  filter:
+    saturate(1.08)
+    contrast(1.05);
 
-    filter: saturate(1.05) contrast(1.03);
+  transition:
+    transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 0.8s ease;
 }
 
 .kolo-gallery-card:hover .kolo-gallery-image {
-    transform: scale(1.04);
+  transform: scale(1.055);
+
+  filter:
+    saturate(1.16)
+    contrast(1.06);
 }
 
-/* Dark cinematic overlay */
+/* Cinematic overlay */
 
 .kolo-gallery-image-wrap::after {
-    content: "";
+  content: "";
 
-    position: absolute;
-    inset: 0;
+  position: absolute;
+  inset: 0;
 
-    background:
-        linear-gradient(
-            90deg,
-            transparent 55%,
-            rgba(0, 0, 0, 0.65)
-        ),
-        linear-gradient(
-            0deg,
-            rgba(0, 0, 0, 0.55),
-            transparent 45%
-        );
+  background:
+    linear-gradient(
+      90deg,
+      transparent 45%,
+      rgba(0, 0, 0, 0.72) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.60),
+      transparent 50%
+    );
 
-    pointer-events: none;
+  pointer-events: none;
 }
 
 /* =========================================================
@@ -108,33 +129,43 @@
 ========================================================= */
 
 .kolo-gallery-overlay {
-    position: absolute;
+  position: absolute;
 
-    top: 20px;
-    left: 20px;
+  top: 20px;
+  left: 20px;
 
-    z-index: 2;
+  z-index: 3;
 
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .kolo-gallery-overlay span {
-    padding: 7px 12px;
+  display: inline-flex;
+  align-items: center;
 
-    border-radius: 999px;
+  min-height: 27px;
 
-    background: rgba(193, 18, 31, 0.92);
+  padding: 0 11px;
 
-    color: #ffffff;
+  border-radius: 999px;
 
-    font-size: 10px;
-    font-weight: 800;
+  color: #050505;
 
-    letter-spacing: 1.5px;
+  background:
+    linear-gradient(
+      135deg,
+      #f4c542,
+      #ffd966
+    );
 
-    box-shadow:
-        0 6px 20px rgba(193, 18, 31, 0.35);
+  font-size: 9px;
+  font-weight: 950;
+
+  letter-spacing: 1.6px;
+
+  box-shadow:
+    0 8px 22px rgba(244, 197, 66, 0.25);
 }
 
 /* =========================================================
@@ -142,48 +173,66 @@
 ========================================================= */
 
 .kolo-gallery-info {
-    position: relative;
+  position: relative;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
-    min-width: 0;
+  min-width: 0;
 
-    padding: 34px;
+  height: 330px;
 
-    background:
-        linear-gradient(
-            145deg,
-            #151515 0%,
-            #0c0c0c 65%,
-            #080808 100%
-        );
+  padding: 38px;
 
-    color: #ffffff !important;
+  overflow: hidden;
 
-    border-left: 1px solid rgba(255, 255, 255, 0.06);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(244, 197, 66, 0.10),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      rgba(22, 138, 69, 0.10),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      #161616,
+      #0b0b0b
+    );
+
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+
+  color: #fff;
 }
 
-/* Red accent line */
+/* Gold accent */
 
 .kolo-gallery-info::before {
-    content: "";
+  content: "";
 
-    position: absolute;
+  position: absolute;
 
-    left: 0;
-    top: 25px;
-    bottom: 25px;
+  left: 0;
+  top: 32px;
+  bottom: 32px;
 
-    width: 3px;
+  width: 3px;
 
-    background: #c1121f;
+  border-radius: 0 5px 5px 0;
 
-    border-radius: 0 4px 4px 0;
+  background:
+    linear-gradient(
+      180deg,
+      #f4c542,
+      #168a45
+    );
 
-    box-shadow:
-        0 0 18px rgba(193, 18, 31, 0.55);
+  box-shadow:
+    0 0 20px rgba(244, 197, 66, 0.35);
 }
 
 /* =========================================================
@@ -191,16 +240,16 @@
 ========================================================= */
 
 .gallery-label {
-    margin: 0 0 10px;
+  margin: 0 0 10px;
 
-    color: #c1121f !important;
+  color: #f4c542 !important;
 
-    font-size: 10px;
-    font-weight: 900;
+  font-size: 10px;
+  font-weight: 950;
 
-    letter-spacing: 2px;
+  letter-spacing: 2.4px;
 
-    text-transform: uppercase;
+  text-transform: uppercase;
 }
 
 /* =========================================================
@@ -208,17 +257,19 @@
 ========================================================= */
 
 .kolo-gallery-info h3 {
-    margin: 0;
+  margin: 0;
 
-    color: #ffffff !important;
+  max-width: 100%;
 
-    font-size: clamp(25px, 3vw, 38px);
+  color: #ffffff !important;
 
-    line-height: 1.05;
+  font-size: clamp(27px, 4vw, 43px);
 
-    font-weight: 900;
+  line-height: 1;
 
-    letter-spacing: -0.5px;
+  font-weight: 950;
+
+  letter-spacing: -1.5px;
 }
 
 /* =========================================================
@@ -226,13 +277,13 @@
 ========================================================= */
 
 .gallery-artist {
-    margin: 10px 0 0;
+  margin: 10px 0 0;
 
-    color: #ffffff !important;
+  color: #f4f4f4 !important;
 
-    font-size: 16px;
+  font-size: 15px;
 
-    font-weight: 700;
+  font-weight: 750;
 }
 
 /* =========================================================
@@ -240,108 +291,113 @@
 ========================================================= */
 
 .gallery-description {
-    margin: 12px 0 0;
+  max-width: 480px;
 
-    color: rgba(255, 255, 255, 0.62) !important;
+  margin: 9px 0 0;
 
-    font-size: 13px;
+  color: rgba(255, 255, 255, 0.55) !important;
 
-    line-height: 1.55;
+  font-size: 12px;
 
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+  line-height: 1.55;
 
-    overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
 }
 
 /* =========================================================
-   BUTTONS
+   ACTIONS
 ========================================================= */
 
 .gallery-actions {
-    display: flex;
+  display: flex;
+  align-items: center;
 
-    align-items: center;
+  gap: 8px;
 
-    gap: 8px;
-
-    margin-top: 22px;
+  margin-top: 22px;
 }
 
 .gallery-prev,
 .gallery-next {
-    flex: 0 0 40px;
+  flex: 0 0 40px;
 
-    width: 40px;
-    height: 40px;
+  width: 40px;
+  height: 40px;
 
-    padding: 0;
+  padding: 0;
 
-    border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
 
-    border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
 
-    cursor: pointer;
+  color: #ffffff !important;
 
-    background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
 
-    color: #ffffff !important;
+  font-size: 16px;
 
-    font-size: 17px;
-
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease,
-        border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .gallery-prev:hover,
 .gallery-next:hover {
-    background: #c1121f;
+  transform: scale(1.08);
 
-    border-color: #c1121f;
+  color: #050505 !important;
 
-    transform: scale(1.06);
+  background: #f4c542;
+
+  border-color: #f4c542;
 }
 
+/* =========================================================
+   DISCOVER BUTTON
+========================================================= */
+
 .gallery-discover {
-    flex: 1;
+  flex: 1;
 
-    min-height: 40px;
+  min-height: 40px;
 
-    padding: 0 18px;
+  padding: 0 18px;
 
-    border: 0;
+  border: 0;
 
-    border-radius: 999px;
+  border-radius: 999px;
 
-    cursor: pointer;
+  color: #050505 !important;
 
-    background: #c1121f;
+  background:
+    linear-gradient(
+      135deg,
+      #f4c542,
+      #ffd966
+    );
 
-    color: #ffffff !important;
+  font-size: 12px;
 
-    font-size: 13px;
+  font-weight: 950;
 
-    font-weight: 800;
+  box-shadow:
+    0 10px 28px rgba(244, 197, 66, 0.18);
 
-    box-shadow:
-        0 8px 22px rgba(193, 18, 31, 0.25);
-
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .gallery-discover:hover {
-    background: #e01b2b;
+  transform: translateY(-2px);
 
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 10px 28px rgba(193, 18, 31, 0.38);
+  box-shadow:
+    0 14px 34px rgba(244, 197, 66, 0.30);
 }
 
 /* =========================================================
@@ -349,41 +405,43 @@
 ========================================================= */
 
 .gallery-dots {
-    display: flex;
+  display: flex;
+  align-items: center;
 
-    align-items: center;
+  gap: 6px;
 
-    gap: 6px;
-
-    margin-top: 17px;
+  margin-top: 17px;
 }
 
 .gallery-dot {
-    width: 6px;
-    height: 6px;
+  width: 6px;
+  height: 6px;
 
-    padding: 0;
+  padding: 0;
 
-    border: 0;
+  border: 0;
 
-    border-radius: 999px;
+  border-radius: 999px;
 
-    cursor: pointer;
+  background: rgba(255, 255, 255, 0.22);
 
-    background: rgba(255, 255, 255, 0.25);
+  transition:
+    width 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
 
-    transition:
-        width 0.25s ease,
-        background 0.25s ease;
+.gallery-dot:hover {
+  background: rgba(244, 197, 66, 0.55);
 }
 
 .gallery-dot.active {
-    width: 22px;
+  width: 24px;
 
-    background: #c1121f;
+  background: #f4c542;
 
-    box-shadow:
-        0 0 8px rgba(193, 18, 31, 0.55);
+  box-shadow:
+    0 0 10px rgba(244, 197, 66, 0.45);
 }
 
 /* =========================================================
@@ -393,20 +451,53 @@
 .gallery-loading,
 .gallery-empty,
 .gallery-error {
-    min-height: 220px;
+  min-height: 260px;
 
-    display: flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    align-items: center;
-    justify-content: center;
+  border-radius: 22px;
 
-    border-radius: 20px;
+  background:
+    linear-gradient(
+      145deg,
+      #121212,
+      #080808
+    );
 
-    background: #0c0c0c;
+  color: rgba(255, 255, 255, 0.60);
 
-    color: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(244, 197, 66, 0.10);
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 13px;
+}
+
+.gallery-error {
+  color: #f4c542;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 850px) {
+  .kolo-gallery-card {
+    grid-template-columns: 44% 56%;
+  }
+
+  .kolo-gallery-image-wrap,
+  .kolo-gallery-info {
+    height: 300px;
+  }
+
+  .kolo-gallery-info {
+    padding: 28px;
+  }
+
+  .kolo-gallery-info h3 {
+    font-size: 30px;
+  }
 }
 
 /* =========================================================
@@ -414,340 +505,134 @@
 ========================================================= */
 
 @media (max-width: 700px) {
+  .kolo-music-gallery {
+    width: 90%;
 
-    .kolo-music-gallery {
-        padding: 5px 0;
-    }
+    padding: 12px 0;
+  }
 
-    .kolo-gallery-card {
-        grid-template-columns: 1fr;
-
-        min-height: 0;
-
-        border-radius: 18px;
-    }
-
-    .kolo-gallery-image-wrap {
-        min-height: 250px;
-
-        max-height: 280px;
-    }
-
-    .kolo-gallery-image {
-        min-height: 250px;
-    }
-
-    .kolo-gallery-info {
-        min-height: 230px;
-
-        padding: 24px;
-    }
-
-    .kolo-gallery-info::before {
-        top: 0;
-        bottom: auto;
-
-        width: 100%;
-        height: 3px;
-
-        border-radius: 0;
-    }
-
-    .kolo-gallery-info h3 {
-        font-size: 27px;
-    }
-
-    .gallery-description {
-        font-size: 12px;
-    }
-
-    .gallery-actions {
-        margin-top: 18px;
-    }
-
-    .gallery-prev,
-    .gallery-next {
-        width: 38px;
-        height: 38px;
-
-        flex-basis: 38px;
-    }
-
-    .gallery-discover {
-        min-height: 38px;
-    }
-}
-
-
-/* =========================================================
-   KOLO MUSIC — COMPACT GALLERY SIZE
-========================================================= */
-
-.kolo-music-gallery {
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 6px 0;
-    overflow: hidden;
-}
-
-.kolo-gallery-card {
-    display: grid;
-    grid-template-columns: 42% 58%;
-
-    width: 100%;
-    max-width: 900px;
-
-    min-height: 240px;
-    height: 270px;
-
-    margin: 0 auto;
-
-    border-radius: 18px;
-    overflow: hidden;
-
-    background: #090909;
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-
-    box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.30),
-        0 0 25px rgba(193, 18, 31, 0.06);
-}
-
-/* =========================================================
-   COMPACT COVER
-========================================================= */
-
-.kolo-gallery-image-wrap {
-    position: relative;
-
-    width: 100%;
-    height: 270px;
+  .kolo-gallery-card {
+    grid-template-columns: 1fr;
 
     min-height: 0;
 
-    overflow: hidden;
+    border-radius: 21px;
+  }
 
-    background: #050505;
-}
-
-.kolo-gallery-image {
-    display: block;
-
+  .kolo-gallery-image-wrap {
     width: 100%;
-    height: 100%;
 
-    min-height: 0;
+    height: 260px;
+  }
 
-    object-fit: cover;
+  .kolo-gallery-image {
+    height: 260px;
+  }
 
-    object-position: center;
-
-    transition:
-        transform 0.7s ease,
-        filter 0.7s ease;
-}
-
-/* =========================================================
-   INFORMATION PANEL
-========================================================= */
-
-.kolo-gallery-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    min-width: 0;
-
-    height: 270px;
-
-    padding: 24px;
-
+  .kolo-gallery-image-wrap::after {
     background:
-        linear-gradient(
-            145deg,
-            #151515 0%,
-            #0c0c0c 65%,
-            #080808 100%
-        );
+      linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.72),
+        transparent 65%
+      );
+  }
 
-    color: #fff !important;
-}
+  .kolo-gallery-overlay {
+    top: 16px;
+    left: 16px;
+  }
 
-/* =========================================================
-   SONG INFORMATION — COMPACT
-========================================================= */
+  .kolo-gallery-info {
+    height: auto;
 
-.gallery-label {
-    margin: 0 0 7px;
+    min-height: 225px;
 
+    padding: 25px 22px;
+  }
+
+  .kolo-gallery-info::before {
+    top: 0;
+    bottom: auto;
+
+    width: 100%;
+    height: 3px;
+
+    border-radius: 0;
+  }
+
+  .gallery-label {
     font-size: 9px;
+  }
 
-    letter-spacing: 1.8px;
-}
+  .kolo-gallery-info h3 {
+    font-size: 27px;
+  }
 
-.kolo-gallery-info h3 {
-    margin: 0;
-
-    font-size: clamp(22px, 3vw, 32px);
-
-    line-height: 1.05;
-
-    font-weight: 900;
-}
-
-.gallery-artist {
-    margin: 7px 0 0;
-
+  .gallery-artist {
     font-size: 14px;
+  }
 
-    font-weight: 700;
-}
+  .gallery-description {
+    font-size: 11px;
+  }
 
-.gallery-description {
-    margin: 8px 0 0;
+  .gallery-actions {
+    margin-top: 18px;
+  }
 
-    font-size: 12px;
+  .gallery-prev,
+  .gallery-next {
+    width: 37px;
+    height: 37px;
 
-    line-height: 1.45;
+    flex-basis: 37px;
+  }
 
-    display: -webkit-box;
+  .gallery-discover {
+    min-height: 37px;
 
-    -webkit-line-clamp: 2;
+    font-size: 11px;
+  }
 
-    -webkit-box-orient: vertical;
-
-    overflow: hidden;
+  .gallery-dots {
+    margin-top: 13px;
+  }
 }
 
 /* =========================================================
-   COMPACT ACTIONS
+   SMALL PHONES
 ========================================================= */
 
-.gallery-actions {
-    display: flex;
+@media (max-width: 420px) {
+  .kolo-music-gallery {
+    width: 92%;
+  }
 
-    align-items: center;
+  .kolo-gallery-image-wrap,
+  .kolo-gallery-image {
+    height: 225px;
+  }
 
-    gap: 7px;
+  .kolo-gallery-info {
+    padding: 22px 18px;
 
-    margin-top: 15px;
-}
+    min-height: 215px;
+  }
 
-.gallery-prev,
-.gallery-next {
-    flex: 0 0 34px;
+  .kolo-gallery-info h3 {
+    font-size: 24px;
+  }
 
+  .gallery-actions {
+    gap: 6px;
+  }
+
+  .gallery-prev,
+  .gallery-next {
     width: 34px;
     height: 34px;
 
-    font-size: 15px;
+    flex-basis: 34px;
+  }
 }
-
-.gallery-discover {
-    min-height: 34px;
-
-    padding: 0 14px;
-
-    font-size: 11px;
-}
-
-/* =========================================================
-   DOTS
-========================================================= */
-
-.gallery-dots {
-    gap: 5px;
-
-    margin-top: 12px;
-}
-
-.gallery-dot {
-    width: 5px;
-    height: 5px;
-}
-
-.gallery-dot.active {
-    width: 18px;
-}
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 700px) {
-
-    .kolo-music-gallery {
-        max-width: 100%;
-        padding: 4px 0;
-    }
-
-    .kolo-gallery-card {
-        grid-template-columns: 1fr;
-
-        height: auto;
-
-        min-height: 0;
-
-        max-width: 100%;
-
-        border-radius: 16px;
-    }
-
-    .kolo-gallery-image-wrap {
-        width: 100%;
-
-        height: 230px;
-
-        min-height: 0;
-
-        max-height: 230px;
-    }
-
-    .kolo-gallery-image {
-        width: 100%;
-        height: 230px;
-
-        min-height: 0;
-
-        object-fit: cover;
-    }
-
-    .kolo-gallery-info {
-        height: auto;
-
-        min-height: 190px;
-
-        padding: 20px;
-    }
-
-    .kolo-gallery-info h3 {
-        font-size: 24px;
-    }
-
-    .gallery-artist {
-        font-size: 13px;
-    }
-
-    .gallery-description {
-        font-size: 11px;
-    }
-
-    .gallery-actions {
-        margin-top: 13px;
-    }
-
-    .gallery-prev,
-    .gallery-next {
-        width: 32px;
-        height: 32px;
-
-        flex-basis: 32px;
-    }
-
-    .gallery-discover {
-        min-height: 32px;
-    }
-}
-

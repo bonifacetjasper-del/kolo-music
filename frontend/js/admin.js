@@ -1,4 +1,4 @@
-﻿
+
 /* ==========================================
    PLATFORM SETTINGS MANAGEMENT
 ========================================== */
@@ -224,7 +224,7 @@ async function savePlatformSettings() {
          * Send settings to FastAPI.
          */
 
-        const response = await adminPut(
+        const response = await adminPost(
             "/settings",
             {
                 scream_price: screamPrice,
@@ -419,14 +419,44 @@ function checkAdminAccess() {
    LOGOUT
 ========================================== */
 
-function adminLogout() {
-  localStorage.removeItem("koloUser");
-  localStorage.removeItem("koloRole");
-  localStorage.removeItem("koloToken");
+async function adminLogout() {
 
-  window.location.href = "index.html";
+  try {
+
+    const notificationToken =
+      localStorage.getItem("koloNotificationToken");
+
+    if (notificationToken) {
+
+      await KOLO_API.post(
+        "/admin/notification-token/remove",
+        {
+          token: notificationToken
+        }
+      );
+
+      console.log(
+        "KOLO: Admin notification token removed."
+      );
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "KOLO: Unable to remove admin notification token:",
+      error
+    );
+
+  } finally {
+
+    localStorage.removeItem("koloUser");
+    localStorage.removeItem("koloRole");
+    localStorage.removeItem("koloToken");
+    localStorage.removeItem("koloNotificationToken");
+
+    window.location.href = "index.html";
+  }
 }
-
 /* ==========================================
    API GET HELPER
 ========================================== */
@@ -897,7 +927,7 @@ async function rejectPayment(paymentId, button) {
            /admin/payments/{payment_id}/reject
         */
 
-    const response = await adminPut(`/admin/payments/${paymentId}/reject`, {});
+    const response = await adminPost(`/admin/payments/${paymentId}/reject`, {});
 
     alert(response?.message || "Payment rejected.");
 
@@ -1162,7 +1192,7 @@ async function rejectSong(songId, button) {
   }
 
   try {
-    const response = await adminPut(`/admin/songs/${songId}/reject`, {});
+    const response = await adminPost(`/admin/songs/${songId}/reject`, {});
 
     alert(response?.message || "Song rejected.");
 
@@ -1409,7 +1439,7 @@ async function rejectArtist(artistId, button) {
   }
 
   try {
-    const response = await adminPut(`/admin/artists/${artistId}/reject`, {});
+    const response = await adminPost(`/admin/artists/${artistId}/reject`, {});
 
     alert(response?.message || "Artist rejected.");
 
@@ -1709,7 +1739,7 @@ async function rejectWithdrawal(withdrawalId, button) {
   }
 
   try {
-    const response = await adminPut(
+    const response = await adminPost(
       `/admin/withdrawals/${withdrawalId}/reject`,
       {},
     );
@@ -1902,7 +1932,7 @@ function escapeHTML(value) {
    ADMIN DASHBOARD START
 ========================================== */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   console.log("KOLO MUSIC Admin Dashboard starting...");
 
   if (!checkAdminAccess()) {
@@ -1911,10 +1941,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
   connectAdminButtons();
 
-  initializePlatformSettings();
+  try {
+    await initializePlatformSettings();
+  } catch (error) {
+    console.error(
+      "Platform settings initialization failed:",
+      error
+    );
+  }
 
-  loadAdminDashboard();
+  try {
+    await loadAdminDashboard();
+  } catch (error) {
+    console.error(
+      "Admin dashboard initialization failed:",
+      error
+    );
+  }
 });
+
+
+
+
+
 
 
 

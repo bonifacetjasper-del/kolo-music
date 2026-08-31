@@ -178,43 +178,7 @@ async function loadArtistProfile() {
            REQUEST ARTIST DASHBOARD
         ================================================= */
 
-    const response = await fetch(`${ARTIST_UPLOAD_API}/artist/dashboard`, {
-      method: "GET",
-
-      headers: {
-        "user-id": user.id,
-      },
-    });
-
-    /* =================================================
-           HANDLE SERVER ERROR
-        ================================================= */
-
-    if (!response.ok) {
-      let errorMessage = "Unable to load artist profile.";
-
-      try {
-        const errorData = await response.json();
-
-        if (errorData.detail) {
-          errorMessage = Array.isArray(errorData.detail)
-            ? errorData.detail
-                .map((error) => error.msg || JSON.stringify(error))
-                .join(", ")
-            : errorData.detail;
-        }
-      } catch (error) {
-        console.error("Unable to read artist error:", error);
-      }
-
-      throw new Error(errorMessage);
-    }
-
-    /* =================================================
-           READ RESPONSE
-        ================================================= */
-
-    const data = await response.json();
+    const data = await window.KOLO_API.get("/artist/dashboard");
 
     console.log("Artist dashboard response:", data);
 
