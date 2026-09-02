@@ -1043,6 +1043,38 @@ function setupScreamModal() {
 }
 
 /* =========================================================
+   OPEN PENDING SONG AFTER LOGIN
+   ========================================================= */
+
+async function openKoloPendingSongAfterLogin() {
+
+  const pendingSongId = localStorage.getItem("koloPendingSongId");
+
+  if (!pendingSongId) {
+    return;
+  }
+
+  localStorage.removeItem("koloPendingSongId");
+
+  try {
+
+    console.log("OPENING PENDING SONG AFTER LOGIN:", pendingSongId);
+
+    const response = await KOLO_API.get(/marketplace/song/);
+
+    if (!response || !response.song_id) {
+      console.warn("Pending song could not be loaded.");
+      return;
+    }
+
+    prepareSong(response);
+
+  } catch (error) {
+    console.error("PENDING SONG ERROR:", error);
+  }
+}
+
+/* =========================================================
    LISTENER DASHBOARD STARTUP
    ========================================================= */
 
@@ -1050,6 +1082,8 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("KOLO listener dashboard starting...");
 
   const user = checkListenerLogin();
+
+  openKoloPendingSongAfterLogin();
 
   /* WELCOME */
 
@@ -1081,6 +1115,10 @@ if (user) {
 /* Discover is public */
 loadDiscoverMusic();
 });
+
+
+
+
 
 
 

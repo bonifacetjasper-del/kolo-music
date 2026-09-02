@@ -1567,3 +1567,366 @@ button {
   }
 }
 
+
+/* ==========================================
+   KOLO MUSIC — GALLERY ARTIST LINK
+========================================== */
+
+.gallery-artist-link {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.gallery-artist-link:hover {
+    text-decoration: underline;
+    opacity: 0.85;
+}
+
+.gallery-artist-link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+}
+
+/* ==========================================
+   KOLO MUSIC — FEATURED ARTISTS 3-CARD LAYOUT
+   SAFE ADDITION
+========================================== */
+
+.kolo-artists-gallery {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.artists-carousel {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.artists-carousel-track {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.artists-gallery-card {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 22px 15px;
+}
+
+.artists-gallery-photo-wrap {
+    width: 125px;
+    height: 125px;
+    flex: 0 0 125px;
+    margin-bottom: 14px;
+}
+
+.artists-gallery-photo {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.artists-gallery-info {
+    width: 100%;
+    min-width: 0;
+}
+
+.artists-carousel-arrow {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.artists-gallery-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.artists-gallery-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    margin-top: 15px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .artists-carousel {
+        gap: 6px;
+    }
+
+    .artists-carousel-track {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .artists-gallery-card {
+        padding: 16px 8px;
+    }
+
+    .artists-gallery-photo-wrap {
+        width: 85px;
+        height: 85px;
+        flex-basis: 85px;
+    }
+
+    .artists-carousel-arrow {
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
+    }
+
+}
+
+
+/* ==========================================
+   KOLO MUSIC — FINAL ARTIST CAROUSEL OVERRIDE
+========================================== */
+
+.kolo-artists-gallery .artists-carousel {
+    width: 100%;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 14px;
+}
+
+.kolo-artists-gallery .artists-carousel-track {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 18px;
+}
+
+.kolo-artists-gallery .artists-gallery-card {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    gap: 0;
+    padding: 22px 15px;
+}
+
+.kolo-artists-gallery .artists-gallery-photo-wrap {
+    width: 125px;
+    height: 125px;
+    min-width: 125px;
+    flex: 0 0 125px;
+    margin-bottom: 14px;
+}
+
+.kolo-artists-gallery .artists-gallery-info {
+    width: 100%;
+    flex: 1;
+    min-width: 0;
+}
+
+.kolo-artists-gallery .artists-carousel-arrow {
+    display: flex !important;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .kolo-artists-gallery .artists-carousel-track {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px;
+    }
+
+    .kolo-artists-gallery .artists-gallery-card {
+        padding: 16px 8px;
+    }
+
+    .kolo-artists-gallery .artists-gallery-photo-wrap {
+        width: 85px;
+        height: 85px;
+        min-width: 85px;
+        flex-basis: 85px;
+    }
+
+    .kolo-artists-gallery .artists-carousel-arrow {
+        flex-basis: 34px;
+        width: 34px;
+        height: 34px;
+    }
+
+}
+
+
+/* ==========================================
+   KOLO MUSIC — ARTIST CAROUSEL FINAL STYLE
+========================================== */
+
+.kolo-artists-gallery .artists-gallery-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(244, 197, 66, 0.16);
+    border-radius: 22px;
+    background:
+        radial-gradient(
+            circle at top center,
+            rgba(244, 197, 66, 0.10),
+            transparent 58%
+        ),
+        linear-gradient(145deg, #181818, #0b0b0b);
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.kolo-artists-gallery .artists-gallery-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(244, 197, 66, 0.55);
+    box-shadow:
+        0 20px 45px rgba(0, 0, 0, 0.45),
+        0 0 25px rgba(244, 197, 66, 0.08);
+}
+
+
+/* ARTIST PHOTO */
+
+.kolo-artists-gallery .artists-gallery-photo {
+    border: 3px solid #f4c542;
+    box-shadow:
+        0 0 0 6px rgba(244, 197, 66, 0.06),
+        0 8px 25px rgba(0, 0, 0, 0.35);
+}
+
+
+/* FEATURED LABEL */
+
+.kolo-artists-gallery .artists-gallery-label {
+    color: #f4c542;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+
+/* ARTIST NAME */
+
+.kolo-artists-gallery .artists-gallery-name {
+    color: #ffffff;
+    font-weight: 900;
+}
+
+
+/* BIO */
+
+.kolo-artists-gallery .artists-gallery-bio {
+    color: #a9a9a9;
+}
+
+
+/* VIEW PROFILE BUTTON */
+
+.kolo-artists-gallery .artists-gallery-profile-btn {
+    min-height: 40px;
+    padding: 0 20px;
+    border: 1px solid #f4c542;
+    border-radius: 22px;
+    background: rgba(244, 197, 66, 0.06);
+    color: #f4c542;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.kolo-artists-gallery .artists-gallery-profile-btn:hover {
+    background: #f4c542;
+    color: #050505;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(244, 197, 66, 0.20);
+}
+
+.kolo-artists-gallery .artists-gallery-profile-btn:active {
+    transform: translateY(0);
+}
+
+
+/* CAROUSEL ARROWS */
+
+.kolo-artists-gallery .artists-carousel-arrow {
+    border: 1px solid rgba(244, 197, 66, 0.35);
+    background: rgba(244, 197, 66, 0.06);
+    color: #f4c542;
+    font-weight: 900;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.kolo-artists-gallery .artists-carousel-arrow:hover {
+    background: #f4c542;
+    color: #050505;
+    border-color: #f4c542;
+}
+
+
+/* DOTS */
+
+.kolo-artists-gallery .artists-gallery-dot {
+    background: rgba(255, 255, 255, 0.20);
+}
+
+.kolo-artists-gallery .artists-gallery-dot.active {
+    background: #f4c542;
+    box-shadow: 0 0 8px rgba(244, 197, 66, 0.35);
+}
+

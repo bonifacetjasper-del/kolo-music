@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Artist Profile — KOLO MUSIC</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/public_artist.css">
+</head>
+
+<body>
+
+    <!-- ==========================================
+         PUBLIC NAVIGATION
+    =========================================== -->
+
+    <header class="navbar">
+
+        <a href="index.html" class="logo">
+            <img
+                src="asserts/images/kolo-logo.png"
+                alt="KOLO MUSIC"
+                class="logo-image"
+            >
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="listener.html">Discover</a>
+            <a href="login.html">Login</a>
+        </nav>
+
+    </header>
+
+
+    <!-- ==========================================
+         PUBLIC ARTIST PROFILE
+    =========================================== -->
+
+    <main class="public-artist-page">
+
+        <section class="public-artist-header">
+
+            <div class="public-artist-photo-wrapper">
+
+                <img
+                    id="publicArtistPhoto"
+                    class="public-artist-photo"
+                    src="asserts/images/kolo-logo.png"
+                    alt="Artist"
+                >
+
+            </div>
+
+            <div class="public-artist-info">
+
+                <p class="public-artist-label">
+                    KOLO MUSIC ARTIST
+                </p>
+
+                <h1 id="publicArtistName">
+                    Loading artist...
+                </h1>
+
+                <p id="publicArtistBio" class="public-artist-bio">
+                    Loading artist profile...
+                </p>
+
+                <p id="publicArtistSongCount" class="public-artist-count">
+                    Loading songs...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             ARTIST MUSIC
+        =========================================== -->
+
+        <section class="public-artist-songs">
+
+            <div class="public-section-heading">
+
+                <div>
+                    <p class="public-section-label">
+                        MUSIC
+                    </p>
+
+                    <h2>
+                        Songs by this Artist
+                    </h2>
+
+                    <p>
+                        Support the artist by screaming their music.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div
+                id="publicArtistSongsMessage"
+                class="public-songs-message"
+            >
+                Loading songs...
+            </div>
+
+
+            <div
+                id="publicArtistSongsContainer"
+                class="public-artist-songs-grid"
+            ></div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==========================================
+         FOOTER
+    =========================================== -->
+
+    <footer class="site-footer">
+
+        <div class="footer-brand">
+            <strong>🔥 KOLO MUSIC</strong>
+            <p>Liberia's music platform.</p>
+        </div>
+
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="listener.html">Discover</a>
+            <a href="login.html">Login</a>
+            <a href="register.html">Register</a>
+        </div>
+
+        <p class="footer-copyright">
+            © 2026 KOLO MUSIC. All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <script src="js/api.js"></script>
+    <script src="js/public_artist.js"></script>
+
+</body>
+</html>

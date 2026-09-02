@@ -44,6 +44,8 @@ def get_marketplace_songs():
         for song in songs:
 
             artist_name = "Unknown Artist"
+            artist_bio = ""
+            artist_profile_photo = ""
 
             artist_id = song.get("artist_id")
 
@@ -52,7 +54,10 @@ def get_marketplace_songs():
                 artist_result = (
                     supabase
                     .table("artists")
-                    .select("artist_name")
+                    .select(
+                        "artist_name, bio, "
+                        "profile_photo_url"
+                    )
                     .eq("id", artist_id)
                     .limit(1)
                     .execute()
@@ -60,13 +65,23 @@ def get_marketplace_songs():
 
                 if artist_result.data:
 
+                    artist = artist_result.data[0]
+
                     artist_name = (
-                        artist_result
-                        .data[0]
-                        .get(
+                        artist.get(
                             "artist_name",
                             "Unknown Artist"
                         )
+                    )
+
+                    artist_bio = (
+                        artist.get("bio") or ""
+                    )
+
+                    artist_profile_photo = (
+                        artist.get(
+                            "profile_photo_url"
+                        ) or ""
                     )
 
             result.append(
@@ -83,8 +98,17 @@ def get_marketplace_songs():
                     "cover_image":
                         song.get("cover_image"),
 
+                    "artist_id":
+                        artist_id,
+
                     "artist_name":
                         artist_name,
+
+                    "artist_bio":
+                        artist_bio,
+
+                    "artist_profile_photo":
+                        artist_profile_photo,
 
                     "price":
                         50,
@@ -113,7 +137,6 @@ def get_marketplace_songs():
             status_code=500,
             detail="Unable to load marketplace songs"
         )
-
 
 # ==========================================
 # GET SINGLE SONG
@@ -194,6 +217,10 @@ def get_song(song_id: str):
 
             "cover_image":
                 song.get("cover_image"),
+
+
+                    "artist_id":
+                        artist_id,
 
             "artist_name":
                 artist_name,
@@ -345,6 +372,9 @@ def search_songs(query: str):
                     "cover_image":
                         song.get("cover_image"),
 
+                    "artist_id":
+                        artist_id,
+
                     "artist_name":
                         artist_name,
 
@@ -391,7 +421,7 @@ def get_artist_profile(
             supabase
             .table("artists")
             .select(
-                "id, artist_name, bio, status"
+                "id, artist_name, bio, profile_photo_url, status"
             )
             .eq(
                 "id",
@@ -481,6 +511,8 @@ def get_artist_profile(
 
             "bio":
                 artist.get("bio"),
+            "profile_photo_url":
+                artist.get("profile_photo_url") or "",
 
             "songs_uploaded":
                 len(formatted_songs),
@@ -610,6 +642,10 @@ def get_trending_songs():
                     "cover_image":
                         song.get("cover_image"),
 
+
+                    "artist_id":
+                        artist_id,
+
                     "artist_name":
                         artist_name,
 
@@ -659,4 +695,12 @@ def get_trending_songs():
             status_code=500,
             detail="Unable to load trending songs"
         )
+
+
+
+
+
+
+
+
 

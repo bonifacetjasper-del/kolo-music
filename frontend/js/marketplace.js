@@ -84,10 +84,14 @@ async function loadTrendingSongs() {
 ========================================== */
 
 async function loadSongs() {
-  try {
-    const response = await KOLO_API.get("/marketplace/songs");
 
-    const container = document.getElementById("songsContainer");
+  try {
+
+    const response =
+      await KOLO_API.get("/marketplace/songs");
+
+    const container =
+      document.getElementById("songsContainer");
 
     if (!container) {
       return;
@@ -95,76 +99,101 @@ async function loadSongs() {
 
     container.innerHTML = "";
 
-    /*
-        The marketplace endpoint may return:
-
-        [
-            {...}
-        ]
-
-        or:
-
-        {
-            songs: [...]
-        }
-        */
-
-    const songs = Array.isArray(response) ? response : response?.songs || [];
+    const songs =
+      Array.isArray(response)
+        ? response
+        : response?.songs || [];
 
     if (songs.length === 0) {
-      container.innerHTML = `
-                <p>
-                    No songs found.
-                </p>
-            `;
+
+      container.innerHTML =
+        "<p>No songs found.</p>";
 
       return;
     }
 
     songs.forEach((song) => {
-      container.innerHTML += `
 
-                <div class="music-card">
+      const card =
+        document.createElement("div");
 
-                    <img
-                        src="${song.cover_image || ""}"
-                        alt="${song.title || "Song"}"
-                    >
+      card.className =
+        "music-card";
 
-                    <div class="music-info">
+      const image =
+        document.createElement("img");
 
-                        <h3>
-                            ${song.title || "Untitled"}
-                        </h3>
+      image.src =
+        song.cover_image || "";
 
-                        <p>
-                            ${song.artist_name || "Unknown Artist"}
-                        </p>
+      image.alt =
+        song.title || "Song";
 
-                        <p>
-                            ${song.description || ""}
-                        </p>
+      const info =
+        document.createElement("div");
 
-                        <p>
-                            💰 50 LD
-                        </p>
+      info.className =
+        "music-info";
 
-                        <button
-                            type="button"
-                            onclick="buySong('${song.song_id}')"
-                        >
-                            🎵 Scream — 50 LD
-                        </button>
+      const title =
+        document.createElement("h3");
 
-                    </div>
+      title.textContent =
+        song.title || "Untitled";
 
-                </div>
+      const artist =
+        document.createElement("p");
 
-            `;
+      artist.textContent =
+        song.artist_name || "Unknown Artist";
+
+      const description =
+        document.createElement("p");
+
+      description.textContent =
+        song.description || "";
+
+      const price =
+        document.createElement("p");
+
+      price.textContent =
+        "50 LD";
+
+      const button =
+        document.createElement("button");
+
+      button.type = "button";
+
+      button.textContent =
+        "Scream - 50 LD";
+
+      button.addEventListener(
+        "click",
+        () => buySong(song.song_id)
+      );
+
+      info.appendChild(title);
+      info.appendChild(artist);
+      info.appendChild(description);
+      info.appendChild(price);
+      info.appendChild(button);
+
+      card.appendChild(image);
+      card.appendChild(info);
+
+      container.appendChild(card);
+
     });
+
   } catch (error) {
-    console.error("Songs loading error:", error);
+
+    console.error(
+      "Songs loading error:",
+      error
+    );
+
   }
+
 }
 
 /* ==========================================
@@ -172,44 +201,146 @@ async function loadSongs() {
 ========================================== */
 
 async function loadArtists() {
-  const container = document.getElementById("artistsContainer");
+
+  const container =
+    document.getElementById("artistsContainer");
 
   if (!container) {
     return;
   }
 
-  /*
-    For now we display a placeholder.
+  try {
 
-    We can connect this to:
+    const response =
+      await KOLO_API.get("/marketplace/songs");
 
-    GET /marketplace/artist/{artist_id}
+    const songs =
+      Array.isArray(response)
+        ? response
+        : response?.songs || [];
 
-    after the main marketplace
-    purchase flow is completed.
-    */
+    if (!songs.length) {
 
-  container.innerHTML = `
+      container.innerHTML =
+        "<p>No featured artists available.</p>";
 
-        <div class="artist-card">
+      return;
+    }
 
-            <h3>
-                ⭐ Featured Artists
-            </h3>
+    const artists = [];
+    const seenArtistIds = new Set();
 
-            <p>
-                Discover Liberia's best artists.
-            </p>
+    songs.forEach((song) => {
 
-        </div>
+      const artistId =
+        song.artist_id;
 
-    `;
+      if (!artistId) {
+        return;
+      }
+
+      if (seenArtistIds.has(artistId)) {
+        return;
+      }
+
+      seenArtistIds.add(artistId);
+
+      artists.push({
+        artist_id: artistId,
+
+        artist_name:
+          song.artist_name ||
+          "Unknown Artist",
+
+        cover_image:
+          song.cover_image || ""
+      });
+
+    });
+
+    if (!artists.length) {
+
+      container.innerHTML =
+        "<p>No featured artists available.</p>";
+
+      return;
+    }
+
+    container.innerHTML = "";
+
+    artists.forEach((artist) => {
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "artist-card";
+
+      const image =
+        document.createElement("img");
+
+      image.src =
+        artist.cover_image ||
+        "./asserts/images/kolo-logo.png";
+
+      image.alt =
+        artist.artist_name;
+
+      image.onerror = function () {
+
+        this.src =
+          "./asserts/images/kolo-logo.png";
+
+      };
+
+      const name =
+        document.createElement("h3");
+
+      name.textContent =
+        artist.artist_name;
+
+      const button =
+        document.createElement("button");
+
+      button.type = "button";
+
+      button.textContent =
+        "View Artist";
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          window.location.href =
+            "./public_artist.html?artist_id=" +
+            encodeURIComponent(
+              artist.artist_id
+            );
+
+        }
+      );
+
+      card.appendChild(image);
+      card.appendChild(name);
+      card.appendChild(button);
+
+      container.appendChild(card);
+
+    });
+
+  } catch (error) {
+
+    console.error(
+      "Featured artists loading error:",
+      error
+    );
+
+    container.innerHTML =
+      "<p>Unable to load featured artists.</p>";
+
+  }
+
 }
-
-/* ==========================================
-   BUY / SCREAM SONG
-========================================== */
-
 async function buySong(songId) {
   if (!songId) {
     alert("Song information is missing.");
@@ -310,3 +441,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadArtists();
 });
+
+

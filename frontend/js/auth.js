@@ -14,6 +14,54 @@ Handles:
 */
 
 /* ==========================================
+   POST-LOGIN REDIRECT
+========================================== */
+
+function handleKoloPostLoginRedirect() {
+
+  const params = new URLSearchParams(window.location.search);
+
+  const redirect =
+    params.get("redirect");
+
+  const songId =
+    params.get("song");
+
+  const returnUrl =
+    params.get("return");
+
+  /*
+     SEARCH RESULT -> LOGIN -> EXACT SONG
+  */
+
+  if (redirect === "listener.html" && songId) {
+
+    localStorage.setItem(
+      "koloPendingSongId",
+      songId
+    );
+
+    window.location.href =
+      "listener.html#discover";
+
+    return true;
+  }
+
+  /*
+     PUBLIC ARTIST -> LOGIN -> ARTIST PROFILE
+  */
+
+  if (returnUrl) {
+
+    window.location.href =
+      returnUrl;
+
+    return true;
+  }
+
+  return false;
+}
+/* ==========================================
    LOGIN USER
 ========================================== */
 
@@ -110,7 +158,9 @@ async function loginUser(event) {
       return;
     }
 
-    window.location.href = "listener.html";
+    if (!handleKoloPostLoginRedirect()) {
+      window.location.href = "listener.html";
+    }
   } catch (error) {
     console.error("Login error:", error);
 
@@ -326,4 +376,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("KOLO MUSIC authentication ready.");
 });
+
+
 
