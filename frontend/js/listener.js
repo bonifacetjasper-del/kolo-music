@@ -1,4 +1,4 @@
-﻿/* =========================================================
+/* =========================================================
    KOLO MUSIC - LISTENER DASHBOARD
    =========================================================
 
@@ -1060,7 +1060,7 @@ async function openKoloPendingSongAfterLogin() {
 
     console.log("OPENING PENDING SONG AFTER LOGIN:", pendingSongId);
 
-    const response = await KOLO_API.get(/marketplace/song/);
+    const response = await KOLO_API.get(`/marketplace/song/${pendingSongId}`);
 
     if (!response || !response.song_id) {
       console.warn("Pending song could not be loaded.");
@@ -1115,6 +1115,7 @@ if (user) {
 /* Discover is public */
 loadDiscoverMusic();
 });
+
 
 
 
