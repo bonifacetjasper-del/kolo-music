@@ -568,6 +568,48 @@ async function loadDiscoverMusic() {
       info.appendChild(status);
       info.appendChild(listenButton);
 
+      // Discover is approved-only; recheck public availability when opening sharing.
+      if (song.song_available !== false && (!song.status || song.status === "approved")
+          && window.KOLO_SHARING?.songUrl(song.song_id)) {
+        const wrapper = document.createElement("div"); wrapper.className = "discover-song-sharing";
+        const shareButton = document.createElement("button"); shareButton.type = "button";
+        shareButton.className = "discover-share-toggle"; shareButton.textContent = "Share";
+        shareButton.setAttribute("aria-label", `Share ${song.title || "song"}`);
+        shareButton.setAttribute("aria-expanded", "false");
+        const {root, controller} = window.KOLO_SHARING.createPanel();
+        shareButton.setAttribute("aria-controls", root.id);
+        const shareMessage = document.createElement("p"); shareMessage.className = "share-status";
+        shareMessage.setAttribute("role", "status"); shareMessage.setAttribute("aria-live", "polite");
+        shareButton.addEventListener("click", async () => {
+          if (shareButton.disabled) return;
+          if (!root.hidden) {
+            controller.clear(); shareButton.setAttribute("aria-expanded", "false"); return;
+          }
+          shareButton.disabled = true; shareMessage.textContent = "Checking song availability...";
+          try {
+            const publicSong = await KOLO_API.get(`/marketplace/song/${encodeURIComponent(song.song_id)}`);
+            if (!publicSong || typeof publicSong.song_id !== "string"
+                || publicSong.song_id.toLowerCase() !== song.song_id.toLowerCase()
+                || typeof publicSong.title !== "string" || !publicSong.title.trim()) {
+              throw new Error("Invalid public song metadata");
+            }
+            if (!container.contains(card)) return;
+            controller.setSong({song_id: publicSong.song_id, title: publicSong.title.trim(),
+              artist_name: typeof publicSong.artist_name === "string" ? publicSong.artist_name : "Unknown artist"});
+            shareButton.setAttribute("aria-expanded", "true"); shareMessage.textContent = "";
+          } catch (_) {
+            controller.clear(); shareMessage.textContent = "This song cannot be shared right now. It may be unavailable. Try again later.";
+          } finally { shareButton.disabled = false; }
+        });
+        root.addEventListener("keydown", event => {
+          if (event.key === "Escape") {
+            controller.clear(); shareButton.setAttribute("aria-expanded", "false"); shareButton.focus();
+          }
+        });
+        wrapper.appendChild(shareButton); wrapper.appendChild(shareMessage); wrapper.appendChild(root);
+        info.appendChild(wrapper);
+      }
+
       card.appendChild(cover);
       card.appendChild(info);
 

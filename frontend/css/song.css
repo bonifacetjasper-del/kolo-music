@@ -1,0 +1,59 @@
+:root { color-scheme: dark; --gold: #F4C542; --green: #168A45; --ink: #090b09; --muted: #b7bdb5; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--ink); color: #f5f5ed; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--gold); outline-offset: 5px; }
+.site-header { max-width: 1240px; margin: auto; padding: 24px 40px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid #ffffff15; }
+.brand { display: flex; align-items: center; gap: 12px; font-size: 19px; font-weight: 800; letter-spacing: .06em; }
+.brand img { object-fit: contain; border-radius: 8px; }
+.brand strong { color: var(--gold); }
+.back-link { color: var(--muted); font-size: 14px; }
+.back-link:hover, .artist-link:hover { color: var(--gold); text-decoration: underline; }
+main { max-width: 1240px; margin: auto; padding: 64px 40px 80px; min-height: 70vh; }
+.song-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: start; gap: 64px; }
+.cover-panel { position: relative; padding: 14px; border: 1px solid #ffffff20; border-radius: 24px; background: linear-gradient(145deg, #23271c, #101510); box-shadow: 0 24px 60px #0008; }
+.song-cover { width: 100%; height: auto; aspect-ratio: 1; display: block; object-fit: cover; background: #111; border-radius: 14px; }
+.cover-label { display: block; color: var(--muted); font-size: 11px; letter-spacing: .16em; text-align: center; padding: 15px 0 3px; }
+.eyebrow { color: var(--gold); font-size: 11px; font-weight: 750; letter-spacing: .16em; margin: 0 0 16px; }
+h1 { font-size: clamp(32px, 4vw, 56px); line-height: 1.1; letter-spacing: -.035em; margin: 0 0 16px; overflow-wrap: anywhere; }
+.artist-name { margin: 0 0 8px; color: #d2d8ce; font-size: 21px; overflow-wrap: anywhere; }
+.artist-link { display: inline-block; color: var(--gold); font-size: 14px; padding: 6px 0; }
+.description { color: var(--muted); margin: 24px 0; white-space: pre-line; overflow-wrap: anywhere; }
+.purchase-options { margin-top: 32px; border-top: 1px solid #ffffff20; padding-top: 24px; }
+h2 { font-size: 18px; font-weight: 650; margin: 0 0 18px; }
+.price-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.price-card { background: #141814; border: 1px solid #ffffff18; border-radius: 14px; padding: 20px 16px; }
+h3 { margin: 0; font-size: 15px; color: #d2d8ce; }
+.price { margin: 8px 0 0; font-size: 32px; font-weight: 750; line-height: 1.3; }
+.price span { font-size: 14px; color: var(--muted); }
+.price-detail { color: var(--muted); font-size: 12px; margin: 8px 0 18px; min-height: 38px; }
+.purchase-button { width: 100%; min-height: 46px; border: 0; border-radius: 8px; padding: 10px 8px; font-size: 13px; font-weight: 750; cursor: pointer; }
+.scream { background: var(--gold); color: #15170f; }
+.download { background: var(--green); color: #fff; }
+.purchase-button:disabled { opacity: .7; cursor: not-allowed; }
+.purchase-note { color: var(--muted); font-size: 13px; margin: 16px 0 0; }
+.page-state { max-width: 620px; margin: 70px auto; padding: 36px; border: 1px solid #ffffff20; border-radius: 20px; background: #141814; }
+.page-state h1 { font-size: clamp(28px, 4vw, 40px); }
+.page-state > p:not(.eyebrow) { color: var(--muted); }
+.retry-button { border: 0; border-radius: 8px; padding: 12px 22px; background: var(--gold); color: #111; font-weight: 700; cursor: pointer; }
+footer { max-width: 1160px; margin: auto; padding: 24px 0; border-top: 1px solid #ffffff15; color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; gap: 16px; }
+footer span { color: var(--gold); letter-spacing: .1em; }
+@media (max-width: 800px) {
+  .site-header { padding: 20px 24px; }
+  main { padding: 32px 24px 48px; }
+  .song-layout { grid-template-columns: 1fr; gap: 32px; }
+  .cover-panel { width: 100%; max-width: 480px; margin: auto; }
+  footer { margin: 0 24px; }
+}
+@media (max-width: 420px) {
+  .site-header { padding: 16px; gap: 12px; }
+  .brand { font-size: 15px; gap: 8px; }
+  .brand img { width: 32px; height: 32px; }
+  .back-link { font-size: 12px; max-width: 115px; text-align: right; }
+  main { padding: 24px 16px 40px; }
+  .price-card { padding: 16px 12px; }
+  .page-state { margin: 24px auto; padding: 24px; }
+  footer { margin: 0 16px; flex-direction: column; gap: 4px; }
+}

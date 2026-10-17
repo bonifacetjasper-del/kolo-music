@@ -5,6 +5,38 @@
 let koloGallerySongs = [];
 let koloGalleryIndex = 0;
 let koloGalleryTimer = null;
+let koloGallerySharing = null;
+function closeKoloGallerySharing(resume = true, focus = false) {
+ const a=koloGallerySharing;if(!a)return;koloGallerySharing=null;
+ a.controller.clear();a.button.setAttribute('aria-expanded','false');a.message.textContent='';
+ if(focus)a.button.focus();if(resume)startKoloGallery();
+}
+function attachKoloGallerySharing(container,song) {
+ const sharing=window.KOLO_SHARING;
+ if(!sharing||!sharing.songUrl(song.song_id)||song.song_available===false||(song.status&&song.status!=='approved'))return;
+ const button=document.createElement('button');button.type='button';button.className='gallery-share-toggle';button.textContent='Share';
+ button.setAttribute('aria-label','Share '+(song.title||'song'));button.setAttribute('aria-expanded','false');
+ const {root,controller}=sharing.createPanel();button.setAttribute('aria-controls',root.id);
+ const message=document.createElement('p');message.className='share-status';message.setAttribute('role','status');message.setAttribute('aria-live','polite');
+ button.addEventListener('click',async()=>{
+  if(koloGallerySharing?.button===button){closeKoloGallerySharing();return;}
+  closeKoloGallerySharing(false);
+  const songId=song.song_id; // Capture rendered identity before async work.
+  const active={button,controller,message};koloGallerySharing=active;stopKoloGallery();button.setAttribute('aria-expanded','true');message.textContent='Checking song availability...';
+  try {
+   const metadata=await KOLO_API.get('/marketplace/song/'+encodeURIComponent(songId));
+   if(koloGallerySharing!==active||!container.contains(button))return;
+   if(!metadata||typeof metadata.song_id!=='string'||metadata.song_id.toLowerCase()!==songId.toLowerCase()||typeof metadata.title!=='string'||!metadata.title.trim())throw Error('Invalid metadata');
+   controller.setSong({song_id:metadata.song_id,title:metadata.title.trim(),artist_name:typeof metadata.artist_name==='string'?metadata.artist_name:'Unknown artist'});message.textContent='';
+  }catch(_){if(koloGallerySharing!==active)return;closeKoloGallerySharing();message.textContent='This song is unavailable for sharing. Try again later.';}
+ });
+ const escape=e=>{if(e.key==='Escape'&&koloGallerySharing?.button===button)closeKoloGallerySharing(true,true);};
+ button.addEventListener('keydown',escape);root.addEventListener('keydown',escape);
+ container.querySelector('.gallery-actions').appendChild(button);
+ const info=container.querySelector('.kolo-gallery-info');info.appendChild(message);info.appendChild(root);
+}
+
+
 /* ==========================================
    KOLO MUSIC — FEATURED ARTISTS GALLERY
 ========================================== */
@@ -141,6 +173,8 @@ async function loadKoloArtists() {
 ========================================== */
 
 async function loadKoloGallery() {
+    closeKoloGallerySharing(false);
+    stopKoloGallery();
 
     const containers =
         document.querySelectorAll(".kolo-music-gallery");
@@ -225,6 +259,7 @@ async function loadKoloGallery() {
 ========================================== */
 
 function renderKoloGallery() {
+    closeKoloGallerySharing();
 
     if (!koloGallerySongs.length) {
         return;
@@ -341,6 +376,7 @@ function renderKoloGallery() {
             </div>
         `;
 
+        attachKoloGallerySharing(container, song);
     });
 
 }
@@ -380,6 +416,7 @@ function createGalleryDots() {
 ========================================== */
 
 function nextKoloGallerySong() {
+    closeKoloGallerySharing();
 
     if (!koloGallerySongs.length) {
         return;
@@ -406,6 +443,7 @@ function nextKoloGallerySong() {
 ========================================== */
 
 function previousKoloGallerySong() {
+    closeKoloGallerySharing();
 
     if (!koloGallerySongs.length) {
         return;
@@ -430,6 +468,7 @@ function previousKoloGallerySong() {
 ========================================== */
 
 function showKoloGallerySong(index) {
+    closeKoloGallerySharing();
 
     if (
         index < 0 ||
@@ -454,6 +493,7 @@ function showKoloGallerySong(index) {
 ========================================== */
 
 function startKoloGallery() {
+    if (koloGallerySharing) { stopKoloGallery(); return; }
 
     stopKoloGallery();
 

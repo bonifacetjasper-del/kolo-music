@@ -316,6 +316,49 @@ function loadArtistSongs(songs) {
 
     item.appendChild(status);
 
+    if (cleanStatus === "approved" && song.song_available !== false
+        && window.KOLO_SHARING?.songUrl(song.id)) {
+      const wrapper = document.createElement("div"); wrapper.className = "artist-song-sharing";
+      const button = document.createElement("button"); button.type = "button";
+      button.className = "artist-share-toggle"; button.textContent = "Share";
+      button.setAttribute("aria-label", `Share ${song.title || "song"}`);
+      button.setAttribute("aria-expanded", "false");
+      const {root, controller} = window.KOLO_SHARING.createPanel();
+      button.setAttribute("aria-controls", root.id);
+      const message = document.createElement("p"); message.className = "share-status";
+      message.setAttribute("role", "status"); message.setAttribute("aria-live", "polite");
+      button.addEventListener("click", async () => {
+        if (button.disabled) return;
+        if (!root.hidden) {
+          controller.clear(); button.setAttribute("aria-expanded", "false"); return;
+        }
+        button.disabled = true; message.textContent = "Checking song availability...";
+        try {
+          // Read public metadata only; never request purchase or playback access.
+          const publicSong = await KOLO_API.get(`/marketplace/song/${encodeURIComponent(song.id)}`);
+          if (!publicSong || typeof publicSong.song_id !== "string"
+              || publicSong.song_id.toLowerCase() !== song.id.toLowerCase()
+              || typeof publicSong.title !== "string" || !publicSong.title.trim()) {
+            throw new Error("Invalid public song metadata");
+          }
+          if (!container.contains(item)) return;
+          controller.setSong({song_id: publicSong.song_id, title: publicSong.title.trim(),
+            artist_name: typeof publicSong.artist_name === "string" ? publicSong.artist_name : "Unknown artist"});
+          button.setAttribute("aria-expanded", "true"); message.textContent = "";
+        } catch (_) {
+          controller.clear();
+          message.textContent = "This song cannot be shared right now. It may be unavailable. Try again later.";
+        } finally { button.disabled = false; }
+      });
+      root.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          controller.clear(); button.setAttribute("aria-expanded", "false"); button.focus();
+        }
+      });
+      wrapper.appendChild(button); wrapper.appendChild(message); wrapper.appendChild(root);
+      item.appendChild(wrapper);
+    }
+
     container.appendChild(item);
   });
 }

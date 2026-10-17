@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Discover a song and its artist on KOLO MUSIC, Liberia’s music platform.">
+  <title>Discover a song | KOLO MUSIC</title>
+  <!-- SONG_PREVIEW_METADATA -->
+  <link rel="stylesheet" href="css/song.css">
+  <link rel="stylesheet" href="css/sharing.css">
+  <script src="js/api.js" defer></script>
+  <script src="js/sharing.js" defer></script>
+  <script src="js/song.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="KOLO MUSIC home">
+      <img src="asserts/images/kolo-logo.png" alt="" width="44" height="44">
+      <span>KOLO <strong>MUSIC</strong></span>
+    </a>
+    <a class="back-link" href="index.html">Back to KOLO MUSIC <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="song-page" aria-busy="true">
+    <section id="page-state" class="page-state" role="status" aria-live="polite" aria-atomic="true">
+      <p class="eyebrow">DISCOVER LIBERIAN MUSIC</p>
+      <h1 id="state-title">Finding your song…</h1>
+      <p id="state-message">Loading song information from KOLO MUSIC.</p>
+      <button id="retry-button" class="retry-button" type="button" hidden>Try again</button>
+    </section>
+    <article id="song-content" class="song-layout" hidden>
+      <div class="cover-panel">
+        <img id="song-cover" class="song-cover" src="asserts/images/kolo-logo.png" alt="Song cover" width="640" height="640" referrerpolicy="no-referrer">
+        <span class="cover-label">KOLO MUSIC · LIBERIA</span>
+      </div>
+      <div class="song-details">
+        <p class="eyebrow">DISCOVER YOUR NEXT FAVORITE</p>
+        <h1 id="song-title"></h1>
+        <p id="song-artist" class="artist-name"></p>
+        <a id="artist-link" class="artist-link" hidden>Explore artist profile <span aria-hidden="true">↗</span></a>
+        <p id="song-description" class="description" hidden></p>
+        <section id="song-sharing" class="kolo-sharing" aria-labelledby="share-heading" hidden>
+          <h2 id="share-heading">Share This Song</h2>
+          <p class="share-intro">Help more people discover this artist on KOLO MUSIC.</p>
+          <div class="share-actions">
+            <a data-share="whatsapp" class="share-button share-whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            <a data-share="facebook" class="share-button" target="_blank" rel="noopener noreferrer">Facebook</a>
+            <button data-share="copy" class="share-button share-copy" type="button">Copy Link</button>
+            <button data-share="native" class="share-button" type="button" hidden>Share to More Apps</button>
+          </div>
+          <p data-share="status" class="share-status" role="status" aria-live="polite"></p>
+          <div data-share="fallback" class="share-fallback" hidden>
+            <label for="share-song-url">Public song link</label>
+            <input id="share-song-url" data-share="url" type="text" readonly spellcheck="false">
+          </div>
+        </section>
+
+      </div>
+    </article>
+  </main>
+  <footer>Made for Liberia. Built for music. <span>KOLO MUSIC</span></footer>
+</body>
+</html>

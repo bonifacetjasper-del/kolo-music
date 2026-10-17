@@ -12,6 +12,7 @@ from backend.routes import (
     marketplace,
     debug,
     settings,
+    song_preview,
 )
 
 app = FastAPI(
@@ -49,6 +50,7 @@ app.include_router(artist.router, prefix="/api")
 app.include_router(listener.router, prefix="/api")
 app.include_router(marketplace.router, prefix="/api")
 app.include_router(settings.router, prefix="/api")
+app.include_router(song_preview.router)
 
 # =========================================================
 # TEMPORARY SUPABASE DEBUG ROUTE
